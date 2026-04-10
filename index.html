@@ -44,6 +44,7 @@
     gap: 12px;
     background: var(--bg2);
   }
+
   .logo {
     font-family: var(--mono);
     font-size: 13px;
@@ -52,13 +53,21 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
+
   .logo span { color: var(--text3); }
+
   header .subtitle {
     font-size: 12px;
     color: var(--text3);
     font-family: var(--mono);
   }
-  .header-right { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .header-right {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
 
   .btn {
     font-family: var(--mono);
@@ -74,29 +83,55 @@
     letter-spacing: 0.03em;
     white-space: nowrap;
   }
-  .btn:hover { background: var(--border); border-color: var(--border2); }
+
+  .btn:hover {
+    background: var(--border);
+    border-color: var(--border2);
+  }
+
   .btn-primary {
     background: var(--accent);
     border-color: var(--accent);
     color: #fff;
   }
-  .btn-primary:hover { background: var(--accent2); border-color: var(--accent2); }
+
+  .btn-primary:hover {
+    background: var(--accent2);
+    border-color: var(--accent2);
+  }
+
   .btn-green {
     background: transparent;
     border-color: var(--green);
     color: var(--green);
   }
-  .btn-green:hover { background: rgba(62,207,142,0.08); }
+
+  .btn-green:hover {
+    background: rgba(62,207,142,0.08);
+  }
+
   .btn-danger {
     background: transparent;
     border-color: transparent;
     color: var(--text3);
     padding: 4px 8px;
   }
-  .btn-danger:hover { color: var(--red); border-color: transparent; background: rgba(245,101,101,0.08); }
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  .main { display: flex; height: calc(100vh - 53px); }
+  .btn-danger:hover {
+    color: var(--red);
+    border-color: transparent;
+    background: rgba(245,101,101,0.08);
+  }
+
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .main {
+    display: flex;
+    height: calc(100vh - 53px);
+  }
 
   .panel-left {
     width: 430px;
@@ -172,10 +207,13 @@
     background: var(--bg2);
     position: relative;
   }
-  .drop-zone:hover, .drop-zone.dragover {
+
+  .drop-zone:hover,
+  .drop-zone.dragover {
     border-color: var(--accent);
     background: rgba(74,158,255,0.04);
   }
+
   .drop-zone input[type=file] {
     position: absolute;
     inset: 0;
@@ -184,17 +222,20 @@
     width: 100%;
     height: 100%;
   }
+
   .drop-icon {
     font-size: 26px;
     margin-bottom: 8px;
     opacity: 0.5;
   }
+
   .drop-title {
     font-family: var(--mono);
     font-size: 12px;
     color: var(--text2);
     margin-bottom: 4px;
   }
+
   .drop-sub {
     font-size: 11px;
     color: var(--text3);
@@ -205,6 +246,7 @@
     display: flex;
     gap: 8px;
   }
+
   .step-actions .btn {
     flex: 1;
     text-align: center;
@@ -219,7 +261,9 @@
     border: 1px solid var(--border);
     display: none;
   }
+
   .preview-wrap.visible { display: block; }
+
   .preview-wrap img {
     width: 100%;
     max-height: 220px;
@@ -227,6 +271,7 @@
     display: block;
     background: #000;
   }
+
   .preview-label {
     position: absolute;
     top: 8px;
@@ -250,17 +295,21 @@
     align-items: center;
     gap: 8px;
   }
+
   .mini-status.visible { display: flex; }
+
   .mini-status.processing {
     background: rgba(74,158,255,0.08);
     border: 1px solid rgba(74,158,255,0.2);
     color: var(--accent);
   }
+
   .mini-status.success {
     background: rgba(62,207,142,0.08);
     border: 1px solid rgba(62,207,142,0.2);
     color: var(--green);
   }
+
   .mini-status.error {
     background: rgba(245,101,101,0.08);
     border: 1px solid rgba(245,101,101,0.2);
@@ -276,7 +325,10 @@
     animation: spin 0.7s linear infinite;
     flex-shrink: 0;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
 
   .status-overview {
     margin: 0 16px 16px;
@@ -285,6 +337,7 @@
     border: 1px solid var(--border);
     background: var(--bg2);
   }
+
   .status-overview-title {
     font-family: var(--mono);
     font-size: 11px;
@@ -293,11 +346,13 @@
     letter-spacing: 0.08em;
     margin-bottom: 8px;
   }
+
   .status-overview-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
+
   .status-chip {
     border: 1px solid var(--border2);
     border-radius: 6px;
@@ -307,10 +362,12 @@
     background: var(--bg3);
     color: var(--text2);
   }
+
   .status-chip.ok {
     border-color: rgba(62,207,142,0.35);
     color: var(--green);
   }
+
   .status-chip.warn {
     border-color: rgba(246,201,14,0.35);
     color: var(--yellow);
@@ -323,6 +380,7 @@
     gap: 10px;
     flex-shrink: 0;
   }
+
   .result-form.visible { display: flex; }
 
   .field-label {
@@ -333,6 +391,7 @@
     letter-spacing: 0.1em;
     margin-bottom: 5px;
   }
+
   .field-input {
     width: 100%;
     background: var(--bg3);
@@ -345,6 +404,7 @@
     outline: none;
     transition: border-color 0.15s;
   }
+
   .field-input:focus { border-color: var(--accent); }
   .field-input.found { border-color: var(--green); }
   .field-input.not-found { border-color: var(--yellow); }
@@ -354,6 +414,7 @@
     font-family: var(--mono);
     margin-top: 4px;
   }
+
   .conf-ok { color: var(--green); }
   .conf-warn { color: var(--yellow); }
 
@@ -369,6 +430,7 @@
     outline: none;
     transition: border-color 0.15s;
   }
+
   .note-input:focus { border-color: var(--accent); }
 
   .save-row {
@@ -376,6 +438,7 @@
     gap: 8px;
     margin-top: 4px;
   }
+
   .save-row .btn { flex: 1; }
 
   .status-bar {
@@ -388,17 +451,21 @@
     align-items: center;
     gap: 10px;
   }
+
   .status-bar.visible { display: flex; }
+
   .status-bar.processing {
     background: rgba(74,158,255,0.08);
     border: 1px solid rgba(74,158,255,0.2);
     color: var(--accent);
   }
+
   .status-bar.success {
     background: rgba(62,207,142,0.08);
     border: 1px solid rgba(62,207,142,0.2);
     color: var(--green);
   }
+
   .status-bar.error {
     background: rgba(245,101,101,0.08);
     border: 1px solid rgba(245,101,101,0.2);
@@ -414,6 +481,7 @@
     flex-shrink: 0;
     background: var(--bg2);
   }
+
   .table-title {
     font-family: var(--mono);
     font-size: 12px;
@@ -421,6 +489,7 @@
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
+
   .entry-count {
     font-family: var(--mono);
     font-size: 11px;
@@ -430,7 +499,12 @@
     padding: 2px 8px;
     border-radius: 20px;
   }
-  .table-actions { margin-left: auto; display: flex; gap: 8px; }
+
+  .table-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+  }
 
   .table-wrap {
     flex: 1;
@@ -442,12 +516,14 @@
     width: 100%;
     border-collapse: collapse;
   }
+
   thead {
     position: sticky;
     top: 0;
     background: var(--bg2);
     z-index: 2;
   }
+
   th {
     font-family: var(--mono);
     font-size: 10px;
@@ -459,11 +535,13 @@
     border-bottom: 1px solid var(--border);
     font-weight: 500;
   }
+
   td {
     padding: 10px 16px;
     border-bottom: 1px solid var(--border);
     vertical-align: middle;
   }
+
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: rgba(255,255,255,0.02); }
 
@@ -473,17 +551,20 @@
     color: var(--text);
     letter-spacing: 0.02em;
   }
+
   .cell-pin {
     font-family: var(--mono);
     font-size: 13px;
     color: var(--accent);
     letter-spacing: 0.04em;
   }
+
   .cell-date {
     font-family: var(--mono);
     font-size: 11px;
     color: var(--text3);
   }
+
   .cell-note {
     font-size: 12px;
     color: var(--text2);
@@ -498,8 +579,17 @@
     padding: 80px 20px;
     color: var(--text3);
   }
-  .empty-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.3; }
-  .empty-text { font-family: var(--mono); font-size: 12px; }
+
+  .empty-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    opacity: 0.3;
+  }
+
+  .empty-text {
+    font-family: var(--mono);
+    font-size: 12px;
+  }
 
   .tag {
     display: inline-block;
@@ -509,8 +599,16 @@
     border-radius: 4px;
     letter-spacing: 0.04em;
   }
-  .tag-ok { background: rgba(62,207,142,0.12); color: var(--green); }
-  .tag-manual { background: rgba(246,201,14,0.12); color: var(--yellow); }
+
+  .tag-ok {
+    background: rgba(62,207,142,0.12);
+    color: var(--green);
+  }
+
+  .tag-manual {
+    background: rgba(246,201,14,0.12);
+    color: var(--yellow);
+  }
 
   .modal-bg {
     position: fixed;
@@ -521,6 +619,7 @@
     justify-content: center;
     z-index: 100;
   }
+
   .modal-bg.open { display: flex; }
 
   .modal {
@@ -531,6 +630,7 @@
     width: 360px;
     max-width: 95vw;
   }
+
   .modal-title {
     font-family: var(--mono);
     font-size: 13px;
@@ -538,6 +638,7 @@
     margin-bottom: 16px;
     font-weight: 600;
   }
+
   video {
     width: 100%;
     border-radius: 8px;
@@ -545,7 +646,12 @@
     display: block;
     margin-bottom: 12px;
   }
-  .modal-btns { display: flex; gap: 8px; }
+
+  .modal-btns {
+    display: flex;
+    gap: 8px;
+  }
+
   .modal-btns .btn { flex: 1; }
 
   ::-webkit-scrollbar { width: 6px; }
@@ -553,22 +659,43 @@
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
   @media (max-width: 900px) {
-    .main { flex-direction: column; height: auto; }
+    .main {
+      flex-direction: column;
+      height: auto;
+    }
+
     .panel-left {
       width: 100%;
       border-right: none;
       border-bottom: 1px solid var(--border);
     }
+
     .panel-right { min-height: 320px; }
   }
 
   @media (max-width: 680px) {
-    header { padding: 12px 16px; align-items: flex-start; }
-    .header-right { width: 100%; margin-left: 0; }
-    .status-overview-grid { grid-template-columns: 1fr; }
-    .step-actions { flex-direction: column; }
-    .save-row { flex-direction: column; }
-    .table-actions { margin-left: 0; }
+    header {
+      padding: 12px 16px;
+      align-items: flex-start;
+    }
+
+    .header-right {
+      width: 100%;
+      margin-left: 0;
+    }
+
+    .status-overview-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .step-actions,
+    .save-row {
+      flex-direction: column;
+    }
+
+    .table-actions {
+      margin-left: 0;
+    }
   }
 </style>
 </head>
@@ -670,7 +797,7 @@
       </div>
       <div>
         <div class="field-label">Cloud-PIN</div>
-        <input class="field-input" id="fieldPIN" type="text" placeholder="z.B. 1234-5678-ABCD">
+        <input class="field-input" id="fieldPIN" type="text" placeholder="z.B. 492667" inputmode="numeric" maxlength="6">
         <div class="field-confidence" id="confPIN"></div>
       </div>
       <div>
@@ -682,7 +809,6 @@
         <button class="btn" onclick="resetForm()">Abbrechen</button>
       </div>
     </div>
-
   </div>
 
   <div class="panel-right">
@@ -783,10 +909,10 @@ let cameraTarget = null;
 
 renderTable();
 updateRequirementState();
-setupDropZone('dropZoneDevice', 'device');
-setupDropZone('dropZonePin', 'pin');
+setupDropZone('dropZoneDevice');
+setupDropZone('dropZonePin');
 
-function setupDropZone(id, type) {
+function setupDropZone(id) {
   const zone = document.getElementById(id);
 
   zone.addEventListener('dragover', e => {
@@ -802,7 +928,9 @@ function setupDropZone(id, type) {
     e.preventDefault();
     zone.classList.remove('dragover');
     const f = e.dataTransfer.files[0];
-    if (f) handleFile(f, type);
+    if (!f) return;
+    const type = id === 'dropZoneDevice' ? 'device' : 'pin';
+    handleFile(f, type);
   });
 }
 
@@ -819,23 +947,24 @@ function handleFile(file, type) {
       document.getElementById('previewWrapDevice').classList.add('visible');
       document.getElementById('scanDeviceBtn').disabled = false;
       hideMiniStatus('device');
-      clearSNFieldIfNotManualOverride();
+      clearSNFieldIfNeeded();
     } else {
       document.getElementById('previewImgPin').src = currentImages.pin;
       document.getElementById('previewWrapPin').classList.add('visible');
       document.getElementById('scanPinBtn').disabled = false;
       hideMiniStatus('pin');
-      clearPINFieldIfNotManualOverride();
+      clearPINFieldIfNeeded();
     }
 
     updateRequirementState();
     maybeShowForm();
     hideStatus();
   };
+
   reader.readAsDataURL(file);
 }
 
-function clearSNFieldIfNotManualOverride() {
+function clearSNFieldIfNeeded() {
   const field = document.getElementById('fieldSN');
   if (currentFound.sn || !field.value.trim()) {
     field.value = '';
@@ -845,7 +974,7 @@ function clearSNFieldIfNotManualOverride() {
   }
 }
 
-function clearPINFieldIfNotManualOverride() {
+function clearPINFieldIfNeeded() {
   const field = document.getElementById('fieldPIN');
   if (currentFound.pin || !field.value.trim()) {
     field.value = '';
@@ -858,13 +987,12 @@ function clearPINFieldIfNotManualOverride() {
 async function runOCR(type) {
   if (!currentImages[type]) return;
 
-  const lang = 'deu+eng';
   const buttonId = type === 'device' ? 'scanDeviceBtn' : 'scanPinBtn';
   document.getElementById(buttonId).disabled = true;
   showMiniStatus(type, 'processing', 'Tesseract lädt… Text wird erkannt…');
 
   try {
-    const worker = await Tesseract.createWorker(lang, 1, {
+    const worker = await Tesseract.createWorker('deu+eng', 1, {
       logger: m => {
         if (m.status === 'recognizing text') {
           showMiniStatus(type, 'processing', `Erkenne Text… ${Math.round(m.progress * 100)}%`);
@@ -886,6 +1014,7 @@ async function runOCR(type) {
     }
 
     maybeShowForm();
+
     if (currentImages.device && currentImages.pin) {
       showStatus('success', 'Beide Fotos vorhanden — Werte prüfen und speichern');
     }
@@ -926,6 +1055,7 @@ function parseSerialResult(text) {
         if (/^[A-Z]+$/.test(v)) return false;
         return /[0-9]/.test(v);
       });
+
       if (filtered.length) {
         sn = filtered.sort((a, b) => b.length - a.length)[0];
         snConf = true;
@@ -951,32 +1081,25 @@ function parsePinResult(text) {
   let pinConf = false;
 
   const pinPatterns = [
-    /(?:cloud[\s\-]?pin|cloudpin|pin)[:\s#]+([A-Z0-9]{4}[\s\-][A-Z0-9]{4}[\s\-][A-Z0-9]{4,8})/i,
-    /\b([A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4,8})\b/,
-    /\b([A-Z0-9]{4}\s[A-Z0-9]{4}\s[A-Z0-9]{4,8})\b/,
-    /\b([0-9]{4}[\s\-][0-9]{4}[\s\-][0-9]{4,8})\b/,
-    /\b([A-Z0-9]{12,20})\b/g
+    /(?:cloud[\s\-]?pin|cloudpin|pin)[:\s#]*([0-9]{6})/i,
+    /\bcloud[\s\-]?pin\b.{0,20}\b([0-9]{6})\b/i,
+    /\b([0-9]{6})\b/g
   ];
 
   for (let i = 0; i < pinPatterns.length; i++) {
-    if (i < 4) {
+    if (i < 2) {
       const m = full.match(pinPatterns[i]);
       if (m) {
-        pin = normalizePin(m[1]);
+        pin = m[1].trim();
         pinConf = true;
         break;
       }
     } else {
-      const all = [...full.matchAll(pinPatterns[i])].map(x => normalizePin(x[1]));
-      const filtered = all.filter(v => {
-        if (!v) return false;
-        const compact = v.replace(/-/g, '');
-        if (compact.length < 12 || compact.length > 20) return false;
-        if (/^(LANCOM|CLOUD|PIN|SERIAL|NUMBER)$/i.test(compact)) return false;
-        return /[0-9]/.test(compact) || /[A-Z]/.test(compact);
-      });
+      const all = [...full.matchAll(pinPatterns[i])].map(x => x[1]);
+      const filtered = all.filter(v => /^\d{6}$/.test(v));
+
       if (filtered.length) {
-        pin = filtered.sort((a, b) => b.length - a.length)[0];
+        pin = filtered[0];
         pinConf = true;
         break;
       }
@@ -999,25 +1122,6 @@ function normalizeSerial(value) {
     .replace(/_/g, '')
     .trim()
     .toUpperCase();
-}
-
-function normalizePin(value) {
-  let v = String(value || '')
-    .replace(/[^\w\s\-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^[-]+|[-]+$/g, '')
-    .trim()
-    .toUpperCase();
-
-  const compact = v.replace(/-/g, '');
-
-  if (!v.includes('-') && compact.length >= 12 && compact.length <= 20) {
-    const parts = compact.match(/.{1,4}/g) || [];
-    v = parts.join('-');
-  }
-
-  return v;
 }
 
 function maybeShowForm() {
@@ -1055,10 +1159,17 @@ function saveEntry() {
   }
 
   const sn = document.getElementById('fieldSN').value.trim();
-  const pin = document.getElementById('fieldPIN').value.trim();
+  const pinField = document.getElementById('fieldPIN');
+  const pin = pinField.value.replace(/\D/g, '').slice(0, 6);
+  pinField.value = pin;
 
   if (!sn && !pin) {
     showStatus('error', 'Mindestens Seriennummer oder PIN eingeben');
+    return;
+  }
+
+  if (pin && !/^\d{6}$/.test(pin)) {
+    showStatus('error', 'Die Cloud-PIN muss genau 6-stellig sein');
     return;
   }
 
@@ -1265,7 +1376,7 @@ function capturePhoto() {
     document.getElementById('previewWrapDevice').classList.add('visible');
     document.getElementById('scanDeviceBtn').disabled = false;
     hideMiniStatus('device');
-    clearSNFieldIfNotManualOverride();
+    clearSNFieldIfNeeded();
   } else if (cameraTarget === 'pin') {
     currentImages.pin = imageData;
     currentTexts.pin = '';
@@ -1273,7 +1384,7 @@ function capturePhoto() {
     document.getElementById('previewWrapPin').classList.add('visible');
     document.getElementById('scanPinBtn').disabled = false;
     hideMiniStatus('pin');
-    clearPINFieldIfNotManualOverride();
+    clearPINFieldIfNeeded();
   }
 
   updateRequirementState();
@@ -1286,6 +1397,7 @@ function closeCamera() {
     cameraStream.getTracks().forEach(t => t.stop());
     cameraStream = null;
   }
+
   cameraTarget = null;
   document.getElementById('cameraModal').classList.remove('open');
 }
