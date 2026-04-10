@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lancom Scanner</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161719;
+    --bg3: #1e2023;
+    --border: #2a2d31;
+    --border2: #363a3f;
+    --text: #e2e4e8;
+    --text2: #8a8f99;
+    --text3: #555a63;
+    --accent: #4a9eff;
+    --accent2: #2d7de0;
+    --green: #3ecf8e;
+    --red: #f56565;
+    --yellow: #f6c90e;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* Header */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg2);
+  }
+  .logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .logo span { color: var(--text3); }
+  header .subtitle {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: var(--mono);
+  }
+  .header-right { margin-left: auto; display: flex; gap: 8px; }
+
+  /* Buttons */
+  .btn {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--border); border-color: var(--border2); }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--accent2); border-color: var(--accent2); }
+  .btn-green {
+    background: transparent;
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .btn-green:hover { background: rgba(62,207,142,0.08); }
+  .btn-danger {
+    background: transparent;
+    border-color: transparent;
+    color: var(--text3);
+    padding: 4px 8px;
+  }
+  .btn-danger:hover { color: var(--red); border-color: transparent; background: rgba(245,101,101,0.08); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Layout */
+  .main { display: flex; height: calc(100vh - 53px); }
+
+  /* Left panel */
+  .panel-left {
+    width: 380px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Drop zone */
+  .drop-zone {
+    margin: 16px;
+    border: 1.5px dashed var(--border2);
+    border-radius: 10px;
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg2);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--accent);
+    background: rgba(74,158,255,0.04);
+  }
+  .drop-zone input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .drop-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    opacity: 0.5;
+  }
+  .drop-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 4px;
+  }
+  .drop-sub { font-size: 11px; color: var(--text3); }
+
+  /* Camera btn */
+  .camera-row {
+    margin: 0 16px 16px;
+    display: flex;
+    gap: 8px;
+  }
+  .camera-row .btn { flex: 1; text-align: center; }
+
+  /* Preview */
+  .preview-wrap {
+    margin: 0 16px 16px;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    display: none;
+  }
+  .preview-wrap.visible { display: block; }
+  .preview-wrap img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: contain;
+    display: block;
+  }
+  .preview-label {
+    position: absolute; top: 8px; left: 8px;
+    background: rgba(0,0,0,0.7);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text2);
+    padding: 3px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  /* OCR Result form */
+  .result-form {
+    margin: 0 16px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .result-form.visible { display: flex; }
+  .field-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 5px;
+  }
+  .field-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field-input:focus { border-color: var(--accent); }
+  .field-input.found { border-color: var(--green); }
+  .field-input.not-found { border-color: var(--yellow); }
+  .field-confidence {
+    font-size: 10px;
+    font-family: var(--mono);
+    margin-top: 4px;
+  }
+  .conf-ok { color: var(--green); }
+  .conf-warn { color: var(--yellow); }
+
+  .note-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .note-input:focus { border-color: var(--accent); }
+
+  .save-row {
+    display: flex; gap: 8px; margin-top: 4px;
+  }
+  .save-row .btn { flex: 1; }
+
+  /* Status bar */
+  .status-bar {
+    margin: 12px 16px 16px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+  .status-bar.visible { display: flex; }
+  .status-bar.processing {
+    background: rgba(74,158,255,0.08);
+    border: 1px solid rgba(74,158,255,0.2);
+    color: var(--accent);
+  }
+  .status-bar.success {
+    background: rgba(62,207,142,0.08);
+    border: 1px solid rgba(62,207,142,0.2);
+    color: var(--green);
+  }
+  .status-bar.error {
+    background: rgba(245,101,101,0.08);
+    border: 1px solid rgba(245,101,101,0.2);
+    color: var(--red);
+  }
+  .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(74,158,255,0.3);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Right panel - table */
+  .panel-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .table-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    background: var(--bg2);
+  }
+  .table-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text2);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .entry-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .table-actions { margin-left: auto; display: flex; gap: 8px; }
+
+  .table-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead {
+    position: sticky; top: 0;
+    background: var(--bg2);
+    z-index: 2;
+  }
+  th {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .cell-sn {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+  .cell-pin {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  .cell-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+  .cell-note {
+    font-size: 12px;
+    color: var(--text2);
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text3);
+  }
+  .empty-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.3; }
+  .empty-text { font-family: var(--mono); font-size: 12px; }
+
+  /* Tag */
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+  }
+  .tag-ok { background: rgba(62,207,142,0.12); color: var(--green); }
+  .tag-manual { background: rgba(246,201,14,0.12); color: var(--yellow); }
+
+  /* Camera modal */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+    display: none;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 20px;
+    width: 360px;
+    max-width: 95vw;
+  }
+  .modal-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  video {
+    width: 100%;
+    border-radius: 8px;
+    background: #000;
+    display: block;
+    margin-bottom: 12px;
+  }
+  .modal-btns { display: flex; gap: 8px; }
+  .modal-btns .btn { flex: 1; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* Mobile */
+  @media (max-width: 680px) {
+    .main { flex-direction: column; height: auto; }
+    .panel-left { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
+    .panel-right { min-height: 300px; }
+    header { padding: 12px 16px; }
+    .header-right .btn span { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">Lancom<span>/</span>Scanner</div>
+    <div class="subtitle">Cloud-PIN &amp; Seriennummer Erfassung</div>
+  </div>
+  <div class="header-right">
+    <button class="btn btn-green" onclick="exportCSV()">⬇ CSV Export</button>
+    <button class="btn" onclick="clearAll()" style="color:var(--text3)">Tabelle leeren</button>
+  </div>
+</header>
+
+<div class="main">
+  <!-- Left: Upload + OCR -->
+  <div class="panel-left">
+
+    <div class="drop-zone" id="dropZone">
+      <input type="file" accept="image/*" id="fileInput" onchange="handleFile(this.files[0])">
+      <div class="drop-icon">📄</div>
+      <div class="drop-title">Foto hierher ziehen oder klicken</div>
+      <div class="drop-sub">JPG, PNG, HEIC — max. 20 MB</div>
+    </div>
+
+    <div class="camera-row">
+      <button class="btn" onclick="openCamera()">📷 Kamera öffnen</button>
+      <button class="btn btn-primary" id="scanBtn" onclick="runOCR()" disabled>⚡ Text erkennen</button>
+    </div>
+
+    <div class="preview-wrap" id="previewWrap">
+      <img id="previewImg" src="" alt="Vorschau">
+      <div class="preview-label">VORSCHAU</div>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+      <div class="spinner" id="statusSpinner"></div>
+      <span id="statusText"></span>
+    </div>
+
+    <div class="result-form" id="resultForm">
+      <div>
+        <div class="field-label">Seriennummer</div>
+        <input class="field-input" id="fieldSN" type="text" placeholder="z.B. 4034928301">
+        <div class="field-confidence" id="confSN"></div>
+      </div>
+      <div>
+        <div class="field-label">Cloud-PIN</div>
+        <input class="field-input" id="fieldPIN" type="text" placeholder="z.B. 1234-5678-ABCD">
+        <div class="field-confidence" id="confPIN"></div>
+      </div>
+      <div>
+        <div class="field-label">Notiz (optional)</div>
+        <input class="note-input" id="fieldNote" type="text" placeholder="z.B. Standort, Gerätename…">
+      </div>
+      <div class="save-row">
+        <button class="btn btn-primary" onclick="saveEntry()">✓ Eintrag speichern</button>
+        <button class="btn" onclick="resetForm()">Abbrechen</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right: Table -->
+  <div class="panel-right">
+    <div class="table-header">
+      <span class="table-title">Erfasste Geräte</span>
+      <span class="entry-count" id="entryCount">0 Einträge</span>
+      <div class="table-actions">
+        <button class="btn" onclick="addManual()">+ Manuell</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Seriennummer</th>
+            <th>Cloud-PIN</th>
+            <th>Erkennnung</th>
+            <th>Datum</th>
+            <th>Notiz</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">📋</div>
+        <div class="empty-text">Noch keine Einträge — Foto hochladen oder manuell hinzufügen</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Camera modal -->
+<div class="modal-bg" id="cameraModal">
+  <div class="modal">
+    <div class="modal-title">📷 Kamera</div>
+    <video id="cameraVideo" autoplay playsinline></video>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="capturePhoto()">Foto aufnehmen</button>
+      <button class="btn" onclick="closeCamera()">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="captureCanvas" style="display:none"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js"></script>
+<script>
+let entries = JSON.parse(localStorage.getItem('lancom_entries') || '[]');
+let currentImage = null;
+let cameraStream = null;
+
+// Init
+renderTable();
+
+// Drag & Drop
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  const f = e.dataTransfer.files[0];
+  if (f) handleFile(f);
+});
+
+function handleFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentImage = e.target.result;
+    document.getElementById('previewImg').src = currentImage;
+    document.getElementById('previewWrap').classList.add('visible');
+    document.getElementById('scanBtn').disabled = false;
+    document.getElementById('resultForm').classList.remove('visible');
+    hideStatus();
+  };
+  reader.readAsDataURL(file);
+}
+
+async function runOCR() {
+  if (!currentImage) return;
+  document.getElementById('scanBtn').disabled = true;
+  showStatus('processing', 'Tesseract lädt… Text wird erkannt…');
+
+  try {
+    const worker = await Tesseract.createWorker('deu+eng', 1, {
+      logger: m => {
+        if (m.status === 'recognizing text') {
+          showStatus('processing', `Erkenne Text… ${Math.round(m.progress * 100)}%`);
+        }
+      }
+    });
+
+    const { data } = await worker.recognize(currentImage);
+    await worker.terminate();
+
+    const raw = data.text;
+    parseOCRResult(raw);
+    showStatus('success', 'Text erkannt — Werte bitte prüfen');
+    document.getElementById('resultForm').classList.add('visible');
+
+  } catch (err) {
+    showStatus('error', 'Fehler: ' + err.message);
+  }
+
+  document.getElementById('scanBtn').disabled = false;
+}
+
+function parseOCRResult(text) {
+  // Normalize
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const full = text.replace(/\s+/g, ' ');
+
+  let sn = '', pin = '', snConf = false, pinConf = false;
+
+  // Serial number patterns (Lancom uses various labels)
+  const snPatterns = [
+    /(?:serial\s*(?:number|no\.?|nr\.?)|seriennummer|s\/n|sn)[:\s#]+([A-Z0-9\-]{6,20})/i,
+    /(?:^|\s)([A-Z]{2,4}[0-9]{6,12})(?:\s|$)/m,
+    /(?:^|\s)([0-9]{10,14})(?:\s|$)/m,
+  ];
+  for (const p of snPatterns) {
+    const m = full.match(p);
+    if (m) { sn = m[1].trim(); snConf = true; break; }
+  }
+
+  // Cloud PIN patterns
+  const pinPatterns = [
+    /(?:cloud[\s\-]?pin|pin)[:\s]+([A-Z0-9]{4}[\s\-][A-Z0-9]{4}[\s\-][A-Z0-9]{4,8})/i,
+    /(?:cloud[\s\-]?pin|pin)[:\s]+([A-Z0-9\-]{8,20})/i,
+    /\b([A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4,8})\b/,
+    /\b([0-9]{4}[\s\-][0-9]{4}[\s\-][0-9]{4,8})\b/,
+  ];
+  for (const p of pinPatterns) {
+    const m = full.match(p);
+    if (m) { pin = m[1].replace(/\s/g, '-').trim(); pinConf = true; break; }
+  }
+
+  const snField = document.getElementById('fieldSN');
+  const pinField = document.getElementById('fieldPIN');
+
+  snField.value = sn;
+  pinField.value = pin;
+
+  snField.className = 'field-input ' + (snConf ? 'found' : 'not-found');
+  pinField.className = 'field-input ' + (pinConf ? 'found' : 'not-found');
+
+  document.getElementById('confSN').innerHTML = snConf
+    ? '<span class="conf-ok">✓ automatisch erkannt</span>'
+    : '<span class="conf-warn">⚠ nicht gefunden — bitte manuell eingeben</span>';
+  document.getElementById('confPIN').innerHTML = pinConf
+    ? '<span class="conf-ok">✓ automatisch erkannt</span>'
+    : '<span class="conf-warn">⚠ nicht gefunden — bitte manuell eingeben</span>';
+
+  document.getElementById('fieldNote').value = '';
+}
+
+function saveEntry() {
+  const sn = document.getElementById('fieldSN').value.trim();
+  const pin = document.getElementById('fieldPIN').value.trim();
+  if (!sn && !pin) {
+    showStatus('error', 'Mindestens Seriennummer oder PIN eingeben');
+    return;
+  }
+  const snConf = document.getElementById('fieldSN').classList.contains('found');
+  const pinConf = document.getElementById('fieldPIN').classList.contains('found');
+  const auto = snConf && pinConf;
+
+  entries.push({
+    id: Date.now(),
+    sn,
+    pin,
+    note: document.getElementById('fieldNote').value.trim(),
+    date: new Date().toLocaleString('de-AT'),
+    auto
+  });
+  saveData();
+  renderTable();
+  resetForm();
+  showStatus('success', 'Eintrag gespeichert');
+}
+
+function deleteEntry(id) {
+  entries = entries.filter(e => e.id !== id);
+  saveData();
+  renderTable();
+}
+
+function addManual() {
+  document.getElementById('fieldSN').value = '';
+  document.getElementById('fieldPIN').value = '';
+  document.getElementById('fieldNote').value = '';
+  document.getElementById('fieldSN').className = 'field-input';
+  document.getElementById('fieldPIN').className = 'field-input';
+  document.getElementById('confSN').innerHTML = '';
+  document.getElementById('confPIN').innerHTML = '';
+  document.getElementById('resultForm').classList.add('visible');
+  document.getElementById('fieldSN').focus();
+}
+
+function resetForm() {
+  document.getElementById('resultForm').classList.remove('visible');
+  hideStatus();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  const count = document.getElementById('entryCount');
+  count.textContent = entries.length + (entries.length === 1 ? ' Eintrag' : ' Einträge');
+  empty.style.display = entries.length ? 'none' : 'block';
+
+  tbody.innerHTML = entries.map((e, i) => `
+    <tr>
+      <td class="cell-date" style="color:var(--text3)">${i + 1}</td>
+      <td class="cell-sn">${e.sn || '<span style="color:var(--text3)">—</span>'}</td>
+      <td class="cell-pin">${e.pin || '<span style="color:var(--text3)">—</span>'}</td>
+      <td><span class="tag ${e.auto ? 'tag-ok' : 'tag-manual'}">${e.auto ? 'Auto' : 'Manuell'}</span></td>
+      <td class="cell-date">${e.date}</td>
+      <td class="cell-note" title="${e.note}">${e.note || ''}</td>
+      <td><button class="btn btn-danger" onclick="deleteEntry(${e.id})">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+function exportCSV() {
+  if (!entries.length) { showStatus('error', 'Keine Einträge zum Exportieren'); return; }
+  const BOM = '\uFEFF';
+  const header = 'Nr.;Seriennummer;Cloud-PIN;Erkennung;Datum;Notiz\r\n';
+  const rows = entries.map((e, i) =>
+    [i+1, e.sn, e.pin, e.auto ? 'Automatisch' : 'Manuell', e.date, e.note]
+    .map(v => '"' + String(v).replace(/"/g, '""') + '"')
+    .join(';')
+  ).join('\r\n');
+  const blob = new Blob([BOM + header + rows], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'lancom_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+function clearAll() {
+  if (!entries.length) return;
+  if (!confirm(`Alle ${entries.length} Einträge löschen?`)) return;
+  entries = [];
+  saveData();
+  renderTable();
+}
+
+function saveData() {
+  localStorage.setItem('lancom_entries', JSON.stringify(entries));
+}
+
+// Status
+function showStatus(type, text) {
+  const bar = document.getElementById('statusBar');
+  const spinner = document.getElementById('statusSpinner');
+  bar.className = 'status-bar visible ' + type;
+  document.getElementById('statusText').textContent = text;
+  spinner.style.display = type === 'processing' ? 'block' : 'none';
+}
+function hideStatus() {
+  document.getElementById('statusBar').className = 'status-bar';
+}
+
+// Camera
+async function openCamera() {
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    document.getElementById('cameraVideo').srcObject = cameraStream;
+    document.getElementById('cameraModal').classList.add('open');
+  } catch {
+    showStatus('error', 'Kamera-Zugriff verweigert oder nicht verfügbar');
+  }
+}
+
+function capturePhoto() {
+  const video = document.getElementById('cameraVideo');
+  const canvas = document.getElementById('captureCanvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  currentImage = canvas.toDataURL('image/jpeg', 0.92);
+  document.getElementById('previewImg').src = currentImage;
+  document.getElementById('previewWrap').classList.add('visible');
+  document.getElementById('scanBtn').disabled = false;
+  closeCamera();
+}
+
+function closeCamera() {
+  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
+  document.getElementById('cameraModal').classList.remove('open');
+}
+</script>
+</body>
+</html>
