@@ -448,6 +448,7 @@
     <div class="subtitle">Cloud-PIN &amp; Seriennummer Erfassung</div>
   </div>
   <div class="header-right">
+    <button class="btn" onclick="openSyncModal()" style="border-color:var(--accent);color:var(--accent)">🔗 Sync-Link</button>
     <button class="btn btn-green" onclick="exportCSV()">⬇ CSV Export</button>
     <button class="btn" onclick="clearAll()" style="color:var(--text3)">Tabelle leeren</button>
   </div>
@@ -530,6 +531,32 @@
         <div class="empty-icon">📋</div>
         <div class="empty-text">Noch keine Einträge — Foto hochladen oder manuell hinzufügen</div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sync modal -->
+<div class="modal-bg" id="syncModal">
+  <div class="modal" style="width:420px">
+    <div class="modal-title">🔗 Sync per Link</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">
+      Alle aktuellen Einträge werden in einen Link kodiert.<br>
+      Den Link am PC öffnen → Daten werden automatisch importiert.
+    </p>
+    <div id="syncLinkWrap" style="display:none">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Sync-Link</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <input id="syncLinkInput" readonly style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-family:var(--mono);font-size:11px;color:var(--accent);outline:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+        <button class="btn" onclick="copySyncLink()" id="copyBtn">Kopieren</button>
+      </div>
+      <div id="qrWrap" style="text-align:center;margin-bottom:12px">
+        <canvas id="qrCanvas" style="border-radius:8px;background:#fff;padding:10px"></canvas>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono)">QR-Code am Handy scannen</div>
+      </div>
+    </div>
+    <div id="syncEmpty" style="text-align:center;padding:20px 0;color:var(--text3);font-family:var(--mono);font-size:12px">Keine Einträge zum Synchronisieren</div>
+    <div class="modal-btns" style="margin-top:4px">
+      <button class="btn" onclick="closeSyncModal()">Schließen</button>
     </div>
   </div>
 </div>
@@ -799,3 +826,102 @@ function closeCamera() {
 </script>
 </body>
 </html>
+<script>
+// Sync per Link
+document.querySelector('header .header-right').insertAdjacentHTML('afterbegin', '');
+
+function openSyncModal() {
+  const modal = document.getElementById('syncModal');
+  modal.classList.add('open');
+  if (!entries.length) {
+    document.getElementById('syncLinkWrap').style.display = 'none';
+    document.getElementById('syncEmpty').style.display = 'block';
+    return;
+  }
+  document.getElementById('syncEmpty').style.display = 'none';
+  document.getElementById('syncLinkWrap').style.display = 'block';
+  const data = JSON.stringify(entries.map(e => ({ s: e.sn, p: e.pin, n: e.note, d: e.date, a: e.auto })));
+  const encoded = btoa(unescape(encodeURIComponent(data)));
+  const url = location.origin + location.pathname + '#sync=' + encoded;
+  document.getElementById('syncLinkInput').value = url;
+  generateQR(url);
+}
+
+function closeSyncModal() {
+  document.getElementById('syncModal').classList.remove('open');
+}
+
+function copySyncLink() {
+  const input = document.getElementById('syncLinkInput');
+  navigator.clipboard.writeText(input.value).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ Kopiert';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'var(--green)';
+    setTimeout(() => { btn.textContent = 'Kopieren'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+  });
+}
+
+function generateQR(url) {
+  const canvas = document.getElementById('qrCanvas');
+  const size = 160;
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, size, size);
+  if (url.length > 2000) {
+    ctx.fillStyle = '#888';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Link zu lang für QR.', size/2, size/2 - 8);
+    ctx.fillText('Bitte manuell kopieren.', size/2, size/2 + 8);
+    return;
+  }
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => { ctx.drawImage(img, 0, 0, size, size); };
+  img.onerror = () => {
+    ctx.fillStyle = '#888';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('QR nicht verfügbar', size/2, size/2);
+    ctx.fillText('Link manuell kopieren', size/2, size/2 + 16);
+  };
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&data=' + encodeURIComponent(url);
+}
+
+function checkSyncImport() {
+  const hash = location.hash;
+  if (!hash.startsWith('#sync=')) return;
+  try {
+    const encoded = hash.slice(6);
+    const data = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+    const imported = data.map(e => ({
+      id: Date.now() + Math.random(),
+      sn: e.s || '',
+      pin: e.p || '',
+      note: e.n || '',
+      date: e.d || new Date().toLocaleString('de-AT'),
+      auto: e.a || false
+    }));
+    let added = 0;
+    for (const imp of imported) {
+      const exists = entries.some(ex => ex.sn === imp.sn && ex.pin === imp.pin);
+      if (!exists) { entries.push(imp); added++; }
+    }
+    if (added > 0) {
+      saveData();
+      renderTable();
+      showStatus('success', added + ' Eintrag' + (added > 1 ? 'e' : '') + ' aus Sync-Link importiert');
+    } else {
+      showStatus('success', 'Sync-Link gelesen — alle Einträge bereits vorhanden');
+    }
+    history.replaceState(null, '', location.pathname);
+  } catch(e) {
+    showStatus('error', 'Sync-Link konnte nicht gelesen werden');
+  }
+}
+
+checkSyncImport();
+</script>
