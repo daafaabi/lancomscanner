@@ -6,7 +6,6 @@
 <title>Lancom Scanner</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
-
   :root {
     --bg: #0e0f11;
     --bg2: #161719;
@@ -24,9 +23,7 @@
     --mono: 'IBM Plex Mono', monospace;
     --sans: 'IBM Plex Sans', sans-serif;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     background: var(--bg);
     color: var(--text);
@@ -34,17 +31,20 @@
     font-size: 14px;
     min-height: 100vh;
     line-height: 1.5;
+    display: flex;
+    flex-direction: column;
   }
 
+  /* ── HEADER ── */
   header {
     border-bottom: 1px solid var(--border);
-    padding: 16px 24px;
+    padding: 14px 24px;
     display: flex;
     align-items: center;
     gap: 12px;
     background: var(--bg2);
+    flex-shrink: 0;
   }
-
   .logo {
     font-family: var(--mono);
     font-size: 13px;
@@ -53,22 +53,15 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
-
   .logo span { color: var(--text3); }
-
-  header .subtitle {
+  .subtitle {
     font-size: 12px;
     color: var(--text3);
     font-family: var(--mono);
   }
+  .header-right { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
 
-  .header-right {
-    margin-left: auto;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
+  /* ── BUTTONS ── */
   .btn {
     font-family: var(--mono);
     font-size: 12px;
@@ -83,138 +76,173 @@
     letter-spacing: 0.03em;
     white-space: nowrap;
   }
-
-  .btn:hover {
-    background: var(--border);
-    border-color: var(--border2);
-  }
-
+  .btn:hover { background: var(--border); }
   .btn-primary {
     background: var(--accent);
     border-color: var(--accent);
     color: #fff;
   }
-
-  .btn-primary:hover {
-    background: var(--accent2);
-    border-color: var(--accent2);
+  .btn-primary:hover { background: var(--accent2); border-color: var(--accent2); }
+  .btn-green { background: transparent; border-color: var(--green); color: var(--green); }
+  .btn-green:hover { background: rgba(62,207,142,0.08); }
+  .btn-danger { background: transparent; border-color: transparent; color: var(--text3); padding: 4px 8px; }
+  .btn-danger:hover { color: var(--red); background: rgba(245,101,101,0.08); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-lg {
+    padding: 12px 28px;
+    font-size: 13px;
   }
 
-  .btn-green {
-    background: transparent;
-    border-color: var(--green);
-    color: var(--green);
-  }
-
-  .btn-green:hover {
-    background: rgba(62,207,142,0.08);
-  }
-
-  .btn-danger {
-    background: transparent;
-    border-color: transparent;
-    color: var(--text3);
-    padding: 4px 8px;
-  }
-
-  .btn-danger:hover {
-    color: var(--red);
-    border-color: transparent;
-    background: rgba(245,101,101,0.08);
-  }
-
-  .btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-
+  /* ── MAIN LAYOUT ── */
   .main {
-    display: flex;
-    height: calc(100vh - 53px);
-  }
-
-  .panel-left {
-    width: 430px;
-    flex-shrink: 0;
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-  }
-
-  .panel-right {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    align-items: center;
+    padding: 28px 20px 40px;
+    overflow-y: auto;
   }
 
-  .step-block {
-    margin: 16px;
-    border: 1px solid var(--border);
-    background: var(--bg2);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-
-  .step-head {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--border);
+  /* ── STEP INDICATOR ── */
+  .step-indicator {
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: rgba(255,255,255,0.02);
+    gap: 0;
+    margin-bottom: 28px;
   }
-
-  .step-number {
-    width: 24px;
-    height: 24px;
+  .step-dot {
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
+    border: 2px solid var(--border2);
     background: var(--bg3);
-    border: 1px solid var(--border2);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--mono);
-    font-size: 11px;
-    color: var(--accent);
-    flex-shrink: 0;
-  }
-
-  .step-title {
-    font-family: var(--mono);
     font-size: 12px;
-    color: var(--text);
-    letter-spacing: 0.04em;
+    color: var(--text3);
+    transition: all 0.3s;
+    position: relative;
+    z-index: 1;
+  }
+  .step-dot.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(74,158,255,0.1);
+    box-shadow: 0 0 0 4px rgba(74,158,255,0.12);
+  }
+  .step-dot.done {
+    border-color: var(--green);
+    background: rgba(62,207,142,0.1);
+    color: var(--green);
+  }
+  .step-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    position: absolute;
+    top: 38px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+  }
+  .step-dot.active .step-label { color: var(--accent); }
+  .step-dot.done .step-label { color: var(--green); }
+  .step-line {
+    width: 80px;
+    height: 2px;
+    background: var(--border2);
+    transition: background 0.3s;
+  }
+  .step-line.done { background: var(--green); }
+
+  /* ── WIZARD CARD ── */
+  .wizard-card {
+    width: 100%;
+    max-width: 620px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg2);
+    overflow: hidden;
+    transition: opacity 0.25s, transform 0.25s;
+    margin-bottom: 36px;
+  }
+  .wizard-card.hidden {
+    display: none;
+  }
+  .wizard-card-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .wizard-step-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: rgba(74,158,255,0.12);
+    border: 1px solid rgba(74,158,255,0.25);
+    color: var(--accent);
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
-
-  .step-sub {
-    font-size: 11px;
-    color: var(--text3);
-    margin-left: auto;
+  .wizard-title {
     font-family: var(--mono);
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 600;
   }
+  .wizard-body { padding: 20px; }
 
-  .drop-zone {
-    margin: 14px;
-    border: 1.5px dashed var(--border2);
+  /* ── GUIDE IMAGE ── */
+  .guide-image-wrap {
+    border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 24px 16px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: var(--bg2);
+    overflow: hidden;
+    margin-bottom: 16px;
+    background: var(--bg3);
     position: relative;
   }
-
-  .drop-zone:hover,
-  .drop-zone.dragover {
-    border-color: var(--accent);
-    background: rgba(74,158,255,0.04);
+  .guide-image-wrap svg {
+    display: block;
+    width: 100%;
+  }
+  .guide-caption {
+    padding: 8px 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    border-top: 1px solid var(--border);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--bg2);
   }
 
-  .drop-zone input[type=file] {
+  /* ── PHOTO CAPTURE AREA ── */
+  .capture-zone {
+    border: 1.5px dashed var(--border2);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    background: var(--bg3);
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .capture-zone:hover { border-color: var(--accent); background: rgba(74,158,255,0.03); }
+  .capture-zone.dragover { border-color: var(--accent); background: rgba(74,158,255,0.06); }
+  .capture-zone input[type=file] {
     position: absolute;
     inset: 0;
     opacity: 0;
@@ -222,167 +250,111 @@
     width: 100%;
     height: 100%;
   }
-
-  .drop-icon {
-    font-size: 26px;
-    margin-bottom: 8px;
-    opacity: 0.5;
+  .capture-placeholder {
+    text-align: center;
+    pointer-events: none;
+    padding: 28px 20px;
   }
-
-  .drop-title {
+  .capture-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.4; }
+  .capture-text {
     font-family: var(--mono);
     font-size: 12px;
     color: var(--text2);
     margin-bottom: 4px;
   }
+  .capture-sub { font-size: 11px; color: var(--text3); }
 
-  .drop-sub {
-    font-size: 11px;
-    color: var(--text3);
-  }
-
-  .step-actions {
-    margin: 0 14px 14px;
-    display: flex;
-    gap: 8px;
-  }
-
-  .step-actions .btn {
-    flex: 1;
-    text-align: center;
-  }
-
-  .preview-wrap {
-    margin: 0 14px 14px;
+  /* ── PHOTO PREVIEW + OVERLAY ── */
+  .photo-wrapper {
     position: relative;
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
-    background: var(--bg3);
-    border: 1px solid var(--border);
+    background: #000;
     display: none;
+    margin-bottom: 14px;
   }
-
-  .preview-wrap.visible { display: block; }
-
-  .preview-wrap img {
+  .photo-wrapper.visible { display: block; }
+  .photo-img {
     width: 100%;
-    max-height: 220px;
+    max-height: 340px;
     object-fit: contain;
     display: block;
-    background: #000;
   }
 
-  .preview-label {
+  /* scanning line animation */
+  .scan-line {
     position: absolute;
-    top: 8px;
-    left: 8px;
-    background: rgba(0,0,0,0.72);
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    box-shadow: 0 0 12px var(--accent);
+    top: 0;
+    display: none;
+    animation: scanDown 1.4s ease-in-out infinite;
+    z-index: 5;
+  }
+  .scan-line.running { display: block; }
+  @keyframes scanDown {
+    0% { top: 0%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  /* OCR result overlay */
+  .ocr-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.88) 40%);
+    padding: 40px 16px 16px;
+    transform: translateY(100%);
+    transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
+    z-index: 10;
+  }
+  .ocr-overlay.visible { transform: translateY(0); }
+  .ocr-overlay-label {
     font-family: var(--mono);
     font-size: 10px;
-    color: var(--text2);
-    padding: 3px 7px;
-    border-radius: 4px;
-    letter-spacing: 0.05em;
-  }
-
-  .mini-status {
-    margin: 0 14px 14px;
-    padding: 9px 12px;
-    border-radius: 6px;
-    font-family: var(--mono);
-    font-size: 11px;
-    display: none;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .mini-status.visible { display: flex; }
-
-  .mini-status.processing {
-    background: rgba(74,158,255,0.08);
-    border: 1px solid rgba(74,158,255,0.2);
-    color: var(--accent);
-  }
-
-  .mini-status.success {
-    background: rgba(62,207,142,0.08);
-    border: 1px solid rgba(62,207,142,0.2);
-    color: var(--green);
-  }
-
-  .mini-status.error {
-    background: rgba(245,101,101,0.08);
-    border: 1px solid rgba(245,101,101,0.2);
-    color: var(--red);
-  }
-
-  .spinner {
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(74,158,255,0.3);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    flex-shrink: 0;
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  .status-overview {
-    margin: 0 16px 16px;
-    padding: 12px 14px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--bg2);
-  }
-
-  .status-overview-title {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text3);
+    color: rgba(255,255,255,0.5);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 8px;
+    letter-spacing: 0.12em;
+    margin-bottom: 4px;
   }
-
-  .status-overview-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .status-chip {
-    border: 1px solid var(--border2);
-    border-radius: 6px;
-    padding: 8px 10px;
+  .ocr-overlay-value {
     font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    line-height: 1.2;
+  }
+  .ocr-overlay-value.found { color: var(--green); }
+  .ocr-overlay-value.not-found { color: var(--yellow); }
+  .ocr-overlay-sub {
     font-size: 11px;
-    background: var(--bg3);
-    color: var(--text2);
+    margin-top: 4px;
+    font-family: var(--mono);
+  }
+  .ocr-overlay-sub.found { color: rgba(62,207,142,0.7); }
+  .ocr-overlay-sub.not-found { color: rgba(246,201,14,0.7); }
+
+  /* canvas highlight overlay */
+  .photo-canvas-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 4;
   }
 
-  .status-chip.ok {
-    border-color: rgba(62,207,142,0.35);
-    color: var(--green);
-  }
-
-  .status-chip.warn {
-    border-color: rgba(246,201,14,0.35);
-    color: var(--yellow);
-  }
-
-  .result-form {
-    margin: 0 16px 16px;
+  /* ── EDITABLE RESULT FIELD ── */
+  .result-field-wrap {
     display: none;
-    flex-direction: column;
-    gap: 10px;
-    flex-shrink: 0;
+    margin-bottom: 14px;
   }
-
-  .result-form.visible { display: flex; }
-
+  .result-field-wrap.visible { display: block; }
   .field-label {
     font-family: var(--mono);
     font-size: 10px;
@@ -391,33 +363,44 @@
     letter-spacing: 0.1em;
     margin-bottom: 5px;
   }
-
   .field-input {
     width: 100%;
     background: var(--bg3);
     border: 1px solid var(--border2);
     border-radius: 6px;
-    padding: 9px 12px;
+    padding: 10px 13px;
     font-family: var(--mono);
-    font-size: 13px;
+    font-size: 15px;
     color: var(--text);
     outline: none;
     transition: border-color 0.15s;
+    letter-spacing: 0.04em;
   }
-
   .field-input:focus { border-color: var(--accent); }
   .field-input.found { border-color: var(--green); }
   .field-input.not-found { border-color: var(--yellow); }
-
-  .field-confidence {
-    font-size: 10px;
+  .field-hint {
+    font-size: 11px;
     font-family: var(--mono);
-    margin-top: 4px;
+    margin-top: 5px;
   }
+  .hint-ok { color: var(--green); }
+  .hint-warn { color: var(--yellow); }
 
-  .conf-ok { color: var(--green); }
-  .conf-warn { color: var(--yellow); }
+  /* ── ACTION ROW ── */
+  .action-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .action-row .btn { flex: 1; text-align: center; }
 
+  /* ── NOTE FIELD ── */
+  .note-wrap {
+    margin-top: 14px;
+    display: none;
+  }
+  .note-wrap.visible { display: block; }
   .note-input {
     width: 100%;
     background: var(--bg3);
@@ -430,58 +413,54 @@
     outline: none;
     transition: border-color 0.15s;
   }
-
   .note-input:focus { border-color: var(--accent); }
 
-  .save-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 4px;
-  }
-
-  .save-row .btn { flex: 1; }
-
+  /* ── STATUS BAR ── */
   .status-bar {
-    margin: 0 16px 16px;
     padding: 10px 14px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-family: var(--mono);
     font-size: 11px;
     display: none;
     align-items: center;
     gap: 10px;
+    margin-top: 12px;
   }
-
   .status-bar.visible { display: flex; }
+  .status-bar.processing { background: rgba(74,158,255,0.08); border: 1px solid rgba(74,158,255,0.2); color: var(--accent); }
+  .status-bar.success { background: rgba(62,207,142,0.08); border: 1px solid rgba(62,207,142,0.2); color: var(--green); }
+  .status-bar.error { background: rgba(245,101,101,0.08); border: 1px solid rgba(245,101,101,0.2); color: var(--red); }
+  .spinner {
+    width: 13px;
+    height: 13px;
+    border: 2px solid rgba(74,158,255,0.3);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .status-bar.processing {
-    background: rgba(74,158,255,0.08);
-    border: 1px solid rgba(74,158,255,0.2);
-    color: var(--accent);
+  /* ── SEPARATOR ── */
+  .section-sep {
+    width: 100%;
+    max-width: 620px;
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0 0 28px;
   }
 
-  .status-bar.success {
-    background: rgba(62,207,142,0.08);
-    border: 1px solid rgba(62,207,142,0.2);
-    color: var(--green);
+  /* ── ENTRIES TABLE ── */
+  .table-section {
+    width: 100%;
+    max-width: 900px;
   }
-
-  .status-bar.error {
-    background: rgba(245,101,101,0.08);
-    border: 1px solid rgba(245,101,101,0.2);
-    color: var(--red);
-  }
-
   .table-header {
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     gap: 12px;
-    flex-shrink: 0;
-    background: var(--bg2);
+    margin-bottom: 12px;
   }
-
   .table-title {
     font-family: var(--mono);
     font-size: 12px;
@@ -489,7 +468,6 @@
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
-
   .entry-count {
     font-family: var(--mono);
     font-size: 11px;
@@ -499,31 +477,15 @@
     padding: 2px 8px;
     border-radius: 20px;
   }
-
-  .table-actions {
-    margin-left: auto;
-    display: flex;
-    gap: 8px;
-  }
-
+  .table-actions { margin-left: auto; display: flex; gap: 8px; }
   .table-wrap {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  thead {
-    position: sticky;
-    top: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
     background: var(--bg2);
-    z-index: 2;
   }
-
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: var(--bg3); }
   th {
     font-family: var(--mono);
     font-size: 10px;
@@ -535,167 +497,41 @@
     border-bottom: 1px solid var(--border);
     font-weight: 500;
   }
-
-  td {
-    padding: 10px 16px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-  }
-
+  td { padding: 10px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: rgba(255,255,255,0.02); }
+  .cell-sn { font-family: var(--mono); font-size: 13px; color: var(--text); letter-spacing: 0.02em; }
+  .cell-pin { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.08em; }
+  .cell-date { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+  .cell-note { font-size: 12px; color: var(--text2); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tag { display: inline-block; font-family: var(--mono); font-size: 10px; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.04em; }
+  .tag-ok { background: rgba(62,207,142,0.12); color: var(--green); }
+  .tag-manual { background: rgba(246,201,14,0.12); color: var(--yellow); }
+  .empty-state { text-align: center; padding: 50px 20px; color: var(--text3); }
+  .empty-icon { font-size: 28px; margin-bottom: 10px; opacity: 0.3; }
+  .empty-text { font-family: var(--mono); font-size: 12px; }
 
-  .cell-sn {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text);
-    letter-spacing: 0.02em;
-  }
-
-  .cell-pin {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--accent);
-    letter-spacing: 0.04em;
-  }
-
-  .cell-date {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text3);
-  }
-
-  .cell-note {
-    font-size: 12px;
-    color: var(--text2);
-    max-width: 180px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 80px 20px;
-    color: var(--text3);
-  }
-
-  .empty-icon {
-    font-size: 32px;
-    margin-bottom: 12px;
-    opacity: 0.3;
-  }
-
-  .empty-text {
-    font-family: var(--mono);
-    font-size: 12px;
-  }
-
-  .tag {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 4px;
-    letter-spacing: 0.04em;
-  }
-
-  .tag-ok {
-    background: rgba(62,207,142,0.12);
-    color: var(--green);
-  }
-
-  .tag-manual {
-    background: rgba(246,201,14,0.12);
-    color: var(--yellow);
-  }
-
-  .modal-bg {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-  }
-
+  /* ── MODAL ── */
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 100; }
   .modal-bg.open { display: flex; }
-
-  .modal {
-    background: var(--bg2);
-    border: 1px solid var(--border2);
-    border-radius: 12px;
-    padding: 20px;
-    width: 360px;
-    max-width: 95vw;
-  }
-
-  .modal-title {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text);
-    margin-bottom: 16px;
-    font-weight: 600;
-  }
-
-  video {
-    width: 100%;
-    border-radius: 8px;
-    background: #000;
-    display: block;
-    margin-bottom: 12px;
-  }
-
-  .modal-btns {
-    display: flex;
-    gap: 8px;
-  }
-
+  .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 20px; width: 360px; max-width: 95vw; }
+  .modal-title { font-family: var(--mono); font-size: 13px; color: var(--text); margin-bottom: 16px; font-weight: 600; }
+  video { width: 100%; border-radius: 8px; background: #000; display: block; margin-bottom: 12px; }
+  .modal-btns { display: flex; gap: 8px; }
   .modal-btns .btn { flex: 1; }
 
+  /* ── SYNC MODAL ── */
+  #syncLinkInput { flex:1; background:var(--bg3); border:1px solid var(--border2); border-radius:6px; padding:8px 10px; font-family:var(--mono); font-size:11px; color:var(--accent); outline:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  /* ── SCROLLBAR ── */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
-  @media (max-width: 900px) {
-    .main {
-      flex-direction: column;
-      height: auto;
-    }
-
-    .panel-left {
-      width: 100%;
-      border-right: none;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .panel-right { min-height: 320px; }
-  }
-
   @media (max-width: 680px) {
-    header {
-      padding: 12px 16px;
-      align-items: flex-start;
-    }
-
-    .header-right {
-      width: 100%;
-      margin-left: 0;
-    }
-
-    .status-overview-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .step-actions,
-    .save-row {
-      flex-direction: column;
-    }
-
-    .table-actions {
-      margin-left: 0;
-    }
+    .action-row { flex-direction: column; }
+    .step-line { width: 50px; }
+    .header-right { margin-left: 0; }
   }
 </style>
 </head>
@@ -704,122 +540,245 @@
 <header>
   <div>
     <div class="logo">Lancom<span>/</span>Scanner</div>
-    <div class="subtitle">2-Foto-Erfassung für Seriennummer &amp; Cloud-PIN</div>
+    <div class="subtitle">Seriennummer &amp; Cloud-PIN erfassen</div>
   </div>
   <div class="header-right">
-    <button class="btn" onclick="openSyncModal()" style="border-color:var(--accent);color:var(--accent)">🔗 Sync-Link</button>
-    <button class="btn btn-green" onclick="exportCSV()">⬇ CSV Export</button>
-    <button class="btn" onclick="clearAll()" style="color:var(--text3)">Tabelle leeren</button>
+    <button class="btn" onclick="addManual()" style="border-color:var(--border2)">+ Manuell</button>
+    <button class="btn" onclick="openSyncModal()" style="border-color:var(--accent);color:var(--accent)">🔗 Sync</button>
+    <button class="btn btn-green" onclick="exportCSV()">⬇ CSV</button>
+    <button class="btn" onclick="clearAll()" style="color:var(--text3)">Leeren</button>
   </div>
 </header>
 
 <div class="main">
-  <div class="panel-left">
 
-    <div class="step-block">
-      <div class="step-head">
-        <div class="step-number">1</div>
-        <div class="step-title">Gerät fotografieren</div>
-        <div class="step-sub">Seriennummer</div>
+  <!-- STEP INDICATOR -->
+  <div class="step-indicator" style="margin-top:8px; position:relative;">
+    <div class="step-dot active" id="dot1">
+      1
+      <span class="step-label">Gerät</span>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div class="step-dot" id="dot2">
+      2
+      <span class="step-label">PIN-Zettel</span>
+    </div>
+    <div class="step-line" id="line2"></div>
+    <div class="step-dot" id="dot3">
+      ✓
+      <span class="step-label">Speichern</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- STEP 1: Gerät / Seriennummer              -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="wizard-card" id="step1Card">
+    <div class="wizard-card-head">
+      <span class="wizard-step-badge">Schritt 1 von 2</span>
+      <span class="wizard-title">Gerät fotografieren — Seriennummer</span>
+    </div>
+    <div class="wizard-body">
+
+      <!-- Guide image: where is the SN on a Lancom device -->
+      <div class="guide-image-wrap">
+        <svg viewBox="0 0 580 180" xmlns="http://www.w3.org/2000/svg">
+          <rect width="580" height="180" fill="#1e2023"/>
+          <!-- device body -->
+          <rect x="40" y="30" width="240" height="120" rx="8" fill="#2a2d31" stroke="#363a3f" stroke-width="1.5"/>
+          <!-- front panel -->
+          <rect x="52" y="42" width="216" height="96" rx="4" fill="#1e2023"/>
+          <!-- LED dots -->
+          <circle cx="70" cy="55" r="3.5" fill="#3ecf8e" opacity="0.8"/>
+          <circle cx="84" cy="55" r="3.5" fill="#4a9eff" opacity="0.7"/>
+          <circle cx="98" cy="55" r="3.5" fill="#4a9eff" opacity="0.4"/>
+          <!-- ports -->
+          <rect x="60" y="100" width="26" height="12" rx="2" fill="#363a3f"/>
+          <rect x="92" y="100" width="26" height="12" rx="2" fill="#363a3f"/>
+          <rect x="124" y="100" width="26" height="12" rx="2" fill="#363a3f"/>
+          <rect x="156" y="100" width="26" height="12" rx="2" fill="#363a3f"/>
+          <!-- label on device bottom -->
+          <rect x="52" y="118" width="216" height="20" rx="0" fill="#161719"/>
+          <text x="64" y="131" font-family="monospace" font-size="8" fill="#555a63">S/N:</text>
+          <text x="84" y="131" font-family="monospace" font-size="8" fill="#8a8f99">L150A012345678</text>
+          <!-- highlight box around SN -->
+          <rect x="79" y="122" width="110" height="12" rx="2" fill="rgba(74,158,255,0.12)" stroke="#4a9eff" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <!-- arrow pointing to SN -->
+          <line x1="290" y1="128" x2="195" y2="128" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arr)"/>
+          <defs>
+            <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L6,3 Z" fill="#4a9eff"/>
+            </marker>
+          </defs>
+          <!-- right side explanation -->
+          <rect x="305" y="55" width="230" height="72" rx="6" fill="rgba(74,158,255,0.07)" stroke="rgba(74,158,255,0.2)" stroke-width="1"/>
+          <text x="320" y="76" font-family="monospace" font-size="9" fill="#4a9eff">SERIENNUMMER — auf dem Gerät</text>
+          <text x="320" y="93" font-family="monospace" font-size="8" fill="#8a8f99">Typisches Format:</text>
+          <text x="320" y="108" font-family="monospace" font-size="10" fill="#e2e4e8" font-weight="600">S/N: L150A012345678</text>
+          <text x="320" y="122" font-family="monospace" font-size="8" fill="#555a63">Unterseite oder Rückseite des Geräts</text>
+        </svg>
+        <div class="guide-caption">📍 Hinweis: Seriennummer befindet sich auf dem Etikett der Geräteunterseite</div>
       </div>
 
-      <div class="drop-zone" id="dropZoneDevice">
-        <input type="file" accept="image/*" id="fileInputDevice" onchange="handleFile(this.files[0], 'device')">
-        <div class="drop-icon">🖥️</div>
-        <div class="drop-title">Foto vom Gerät hochladen</div>
-        <div class="drop-sub">Hier soll die Seriennummer sichtbar sein</div>
+      <!-- Capture zone -->
+      <div class="capture-zone" id="dropZoneDevice">
+        <input type="file" accept="image/*" id="fileInputDevice" onchange="handleFile(this.files[0],'device')">
+        <div class="capture-placeholder">
+          <div class="capture-icon">🖥️</div>
+          <div class="capture-text">Foto vom Gerät hierher ziehen oder klicken</div>
+          <div class="capture-sub">Das Etikett mit der Seriennummer muss sichtbar sein</div>
+        </div>
       </div>
 
-      <div class="step-actions">
-        <button class="btn" onclick="openCamera('device')">📷 Gerät mit Kamera fotografieren</button>
+      <!-- Photo preview with overlay -->
+      <div class="photo-wrapper" id="photoWrapDevice">
+        <img class="photo-img" id="photoImgDevice" alt="Gerät">
+        <canvas class="photo-canvas-overlay" id="canvasDevice"></canvas>
+        <div class="scan-line" id="scanLineDevice"></div>
+        <div class="ocr-overlay" id="ocrOverlayDevice">
+          <div class="ocr-overlay-label">Erkannte Seriennummer</div>
+          <div class="ocr-overlay-value" id="ocrValueDevice">—</div>
+          <div class="ocr-overlay-sub" id="ocrSubDevice"></div>
+        </div>
+      </div>
+
+      <!-- Editable result field (shown after OCR) -->
+      <div class="result-field-wrap" id="snFieldWrap">
+        <div class="field-label">Seriennummer — bitte prüfen &amp; ggf. korrigieren</div>
+        <input class="field-input" id="fieldSN" type="text" placeholder="z.B. L150A012345678">
+        <div class="field-hint" id="hintSN"></div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-row">
+        <button class="btn" onclick="openCamera('device')">📷 Kamera öffnen</button>
         <button class="btn btn-primary" id="scanDeviceBtn" onclick="runOCR('device')" disabled>⚡ Seriennummer erkennen</button>
       </div>
 
-      <div class="preview-wrap" id="previewWrapDevice">
-        <img id="previewImgDevice" src="" alt="Vorschau Gerät">
-        <div class="preview-label">GERÄT</div>
-      </div>
-
-      <div class="mini-status" id="statusDevice">
+      <!-- Status -->
+      <div class="status-bar" id="statusDevice">
         <div class="spinner" id="spinnerDevice"></div>
         <span id="statusTextDevice"></span>
       </div>
-    </div>
 
-    <div class="step-block">
-      <div class="step-head">
-        <div class="step-number">2</div>
-        <div class="step-title">Zettel fotografieren</div>
-        <div class="step-sub">Cloud-PIN</div>
-      </div>
-
-      <div class="drop-zone" id="dropZonePin">
-        <input type="file" accept="image/*" id="fileInputPin" onchange="handleFile(this.files[0], 'pin')">
-        <div class="drop-icon">📄</div>
-        <div class="drop-title">Foto vom PIN-Zettel hochladen</div>
-        <div class="drop-sub">Hier soll die Cloud-PIN sichtbar sein</div>
-      </div>
-
-      <div class="step-actions">
-        <button class="btn" onclick="openCamera('pin')">📷 Zettel mit Kamera fotografieren</button>
-        <button class="btn btn-primary" id="scanPinBtn" onclick="runOCR('pin')" disabled>⚡ Cloud-PIN erkennen</button>
-      </div>
-
-      <div class="preview-wrap" id="previewWrapPin">
-        <img id="previewImgPin" src="" alt="Vorschau Zettel">
-        <div class="preview-label">ZETTEL</div>
-      </div>
-
-      <div class="mini-status" id="statusPin">
-        <div class="spinner" id="spinnerPin"></div>
-        <span id="statusTextPin"></span>
-      </div>
-    </div>
-
-    <div class="status-overview">
-      <div class="status-overview-title">Pflichtstatus</div>
-      <div class="status-overview-grid">
-        <div class="status-chip warn" id="chipDevice">Gerätefoto fehlt</div>
-        <div class="status-chip warn" id="chipPin">PIN-Zettel fehlt</div>
-      </div>
-    </div>
-
-    <div class="status-bar" id="statusBar">
-      <div class="spinner" id="statusSpinner"></div>
-      <span id="statusText"></span>
-    </div>
-
-    <div class="result-form" id="resultForm">
-      <div>
-        <div class="field-label">Seriennummer</div>
-        <input class="field-input" id="fieldSN" type="text" placeholder="z.B. 4034928301">
-        <div class="field-confidence" id="confSN"></div>
-      </div>
-      <div>
-        <div class="field-label">Cloud-PIN</div>
-        <input class="field-input" id="fieldPIN" type="text" placeholder="z.B. 492667" inputmode="numeric" maxlength="6">
-        <div class="field-confidence" id="confPIN"></div>
-      </div>
-      <div>
-        <div class="field-label">Notiz (optional)</div>
-        <input class="note-input" id="fieldNote" type="text" placeholder="z.B. Standort, Gerätename…">
-      </div>
-      <div class="save-row">
-        <button class="btn btn-primary" onclick="saveEntry()">✓ Eintrag speichern</button>
-        <button class="btn" onclick="resetForm()">Abbrechen</button>
+      <!-- Next button (shown after OCR) -->
+      <div style="margin-top:14px; display:none;" id="nextBtn1Wrap">
+        <button class="btn btn-primary btn-lg" style="width:100%" onclick="goToStep2()">Weiter → PIN-Zettel fotografieren</button>
       </div>
     </div>
   </div>
 
-  <div class="panel-right">
+  <!-- ══════════════════════════════════════════ -->
+  <!-- STEP 2: PIN-Zettel / Cloud-PIN            -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="wizard-card hidden" id="step2Card">
+    <div class="wizard-card-head">
+      <span class="wizard-step-badge">Schritt 2 von 2</span>
+      <span class="wizard-title">PIN-Zettel fotografieren — Cloud-PIN</span>
+    </div>
+    <div class="wizard-body">
+
+      <!-- Guide image: where is the cloud PIN -->
+      <div class="guide-image-wrap">
+        <svg viewBox="0 0 580 180" xmlns="http://www.w3.org/2000/svg">
+          <rect width="580" height="180" fill="#1e2023"/>
+          <!-- paper/document -->
+          <rect x="60" y="20" width="180" height="140" rx="4" fill="#2a2d31" stroke="#363a3f" stroke-width="1.5"/>
+          <!-- paper lines -->
+          <rect x="75" y="36" width="140" height="6" rx="2" fill="#363a3f"/>
+          <rect x="75" y="50" width="100" height="4" rx="2" fill="#2d3035"/>
+          <rect x="75" y="62" width="120" height="4" rx="2" fill="#2d3035"/>
+          <rect x="75" y="76" width="80" height="4" rx="2" fill="#2d3035"/>
+          <!-- Cloud PIN label -->
+          <text x="75" y="106" font-family="monospace" font-size="8" fill="#555a63">Cloud-PIN:</text>
+          <!-- PIN value -->
+          <text x="75" y="122" font-family="monospace" font-size="14" fill="#e2e4e8" font-weight="700" letter-spacing="4">123456</text>
+          <!-- highlight box around PIN -->
+          <rect x="71" y="109" width="102" height="18" rx="3" fill="rgba(62,207,142,0.12)" stroke="#3ecf8e" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <!-- arrow pointing to PIN -->
+          <line x1="290" y1="118" x2="178" y2="118" stroke="#3ecf8e" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <defs>
+            <marker id="arr2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L6,3 Z" fill="#3ecf8e"/>
+            </marker>
+          </defs>
+          <!-- right side explanation -->
+          <rect x="305" y="55" width="230" height="72" rx="6" fill="rgba(62,207,142,0.07)" stroke="rgba(62,207,142,0.2)" stroke-width="1"/>
+          <text x="320" y="76" font-family="monospace" font-size="9" fill="#3ecf8e">CLOUD-PIN — auf dem Beipackzettel</text>
+          <text x="320" y="93" font-family="monospace" font-size="8" fill="#8a8f99">Immer genau 6 Ziffern:</text>
+          <text x="320" y="110" font-family="monospace" font-size="14" fill="#e2e4e8" font-weight="700" letter-spacing="4">123456</text>
+          <text x="320" y="126" font-family="monospace" font-size="8" fill="#555a63">Meist neben QR-Code auf dem Zettel</text>
+        </svg>
+        <div class="guide-caption">📍 Hinweis: Cloud-PIN = genau 6 Ziffern, meist neben dem QR-Code auf dem Beipackzettel</div>
+      </div>
+
+      <!-- Capture zone -->
+      <div class="capture-zone" id="dropZonePin">
+        <input type="file" accept="image/*" id="fileInputPin" onchange="handleFile(this.files[0],'pin')">
+        <div class="capture-placeholder">
+          <div class="capture-icon">📄</div>
+          <div class="capture-text">Foto vom PIN-Zettel hierher ziehen oder klicken</div>
+          <div class="capture-sub">Die 6-stellige Cloud-PIN muss sichtbar sein</div>
+        </div>
+      </div>
+
+      <!-- Photo preview with overlay -->
+      <div class="photo-wrapper" id="photoWrapPin">
+        <img class="photo-img" id="photoImgPin" alt="PIN-Zettel">
+        <canvas class="photo-canvas-overlay" id="canvasPin"></canvas>
+        <div class="scan-line" id="scanLinePin"></div>
+        <div class="ocr-overlay" id="ocrOverlayPin">
+          <div class="ocr-overlay-label">Erkannte Cloud-PIN</div>
+          <div class="ocr-overlay-value" id="ocrValuePin">—</div>
+          <div class="ocr-overlay-sub" id="ocrSubPin"></div>
+        </div>
+      </div>
+
+      <!-- Editable result field -->
+      <div class="result-field-wrap" id="pinFieldWrap">
+        <div class="field-label">Cloud-PIN (6 Stellen) — bitte prüfen &amp; ggf. korrigieren</div>
+        <input class="field-input" id="fieldPIN" type="text" placeholder="z.B. 123456" maxlength="6">
+        <div class="field-hint" id="hintPIN"></div>
+      </div>
+
+      <!-- Note field -->
+      <div class="note-wrap" id="noteWrap">
+        <div class="field-label" style="margin-bottom:5px">Notiz (optional)</div>
+        <input class="note-input" id="fieldNote" type="text" placeholder="z.B. Standort, Gerätename…">
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-row" style="margin-top:14px">
+        <button class="btn" onclick="goToStep1()">← Zurück</button>
+        <button class="btn" onclick="openCamera('pin')">📷 Kamera öffnen</button>
+        <button class="btn btn-primary" id="scanPinBtn" onclick="runOCR('pin')" disabled>⚡ PIN erkennen</button>
+      </div>
+
+      <!-- Status -->
+      <div class="status-bar" id="statusPin">
+        <div class="spinner" id="spinnerPin"></div>
+        <span id="statusTextPin"></span>
+      </div>
+
+      <!-- Save button (shown after OCR) -->
+      <div style="margin-top:14px; display:none;" id="saveWrap">
+        <button class="btn btn-green btn-lg" style="width:100%; font-size:14px" onclick="saveEntry()">✓ Eintrag speichern &amp; neues Gerät erfassen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- ENTRIES TABLE                             -->
+  <!-- ══════════════════════════════════════════ -->
+  <hr class="section-sep">
+  <div class="table-section">
     <div class="table-header">
       <span class="table-title">Erfasste Geräte</span>
       <span class="entry-count" id="entryCount">0 Einträge</span>
       <div class="table-actions">
-        <button class="btn" onclick="addManual()">+ Manuell</button>
+        <button class="btn btn-green" onclick="exportCSV()">⬇ CSV Export</button>
       </div>
     </div>
-
     <div class="table-wrap">
       <table>
         <thead>
@@ -835,43 +794,16 @@
         </thead>
         <tbody id="tableBody"></tbody>
       </table>
-
       <div class="empty-state" id="emptyState">
         <div class="empty-icon">📋</div>
-        <div class="empty-text">Noch keine Einträge — zuerst 2 Fotos machen oder manuell hinzufügen</div>
+        <div class="empty-text">Noch keine Einträge — Fotos machen oder manuell hinzufügen</div>
       </div>
     </div>
   </div>
-</div>
 
-<div class="modal-bg" id="syncModal">
-  <div class="modal" style="width:420px">
-    <div class="modal-title">🔗 Sync per Link</div>
-    <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">
-      Alle aktuellen Einträge werden in einen Link kodiert.<br>
-      Den Link am PC öffnen → Daten werden automatisch importiert.
-    </p>
+</div><!-- /main -->
 
-    <div id="syncLinkWrap" style="display:none">
-      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Sync-Link</div>
-      <div style="display:flex;gap:8px;margin-bottom:10px">
-        <input id="syncLinkInput" readonly style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-family:var(--mono);font-size:11px;color:var(--accent);outline:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-        <button class="btn" onclick="copySyncLink()" id="copyBtn">Kopieren</button>
-      </div>
-      <div id="qrWrap" style="text-align:center;margin-bottom:12px">
-        <canvas id="qrCanvas" style="border-radius:8px;background:#fff;padding:10px"></canvas>
-        <div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono)">QR-Code am Handy scannen</div>
-      </div>
-    </div>
-
-    <div id="syncEmpty" style="text-align:center;padding:20px 0;color:var(--text3);font-family:var(--mono);font-size:12px">Keine Einträge zum Synchronisieren</div>
-
-    <div class="modal-btns" style="margin-top:4px">
-      <button class="btn" onclick="closeSyncModal()">Schließen</button>
-    </div>
-  </div>
-</div>
-
+<!-- ── CAMERA MODAL ── -->
 <div class="modal-bg" id="cameraModal">
   <div class="modal">
     <div class="modal-title" id="cameraModalTitle">📷 Kamera</div>
@@ -883,313 +815,559 @@
   </div>
 </div>
 
+<!-- ── SYNC MODAL ── -->
+<div class="modal-bg" id="syncModal">
+  <div class="modal" style="width:420px">
+    <div class="modal-title">🔗 Sync per Link</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">
+      Alle Einträge werden in einen Link kodiert — am PC öffnen zum Importieren.
+    </p>
+    <div id="syncLinkWrap" style="display:none">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Sync-Link</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <input id="syncLinkInput" readonly>
+        <button class="btn" onclick="copySyncLink()" id="copyBtn">Kopieren</button>
+      </div>
+      <div id="qrWrap" style="text-align:center;margin-bottom:12px">
+        <canvas id="qrCanvas" style="border-radius:8px;background:#fff;padding:10px"></canvas>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono)">QR-Code am Handy scannen</div>
+      </div>
+    </div>
+    <div id="syncEmpty" style="text-align:center;padding:20px 0;color:var(--text3);font-family:var(--mono);font-size:12px">Keine Einträge zum Synchronisieren</div>
+    <div class="modal-btns" style="margin-top:4px">
+      <button class="btn" onclick="closeSyncModal()">Schließen</button>
+    </div>
+  </div>
+</div>
+
 <canvas id="captureCanvas" style="display:none"></canvas>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js"></script>
 <script>
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
 let entries = JSON.parse(localStorage.getItem('lancom_entries') || '[]');
-
-let currentImages = {
-  device: null,
-  pin: null
-};
-
-let currentTexts = {
-  device: '',
-  pin: ''
-};
-
-let currentFound = {
-  sn: false,
-  pin: false
-};
-
+let currentStep = 1;
+let deviceImage = null;
+let pinImage    = null;
+let foundSN  = '';
+let foundPIN = '';
+let snConfident  = false;
+let pinConfident = false;
 let cameraStream = null;
 let cameraTarget = null;
 
+// init
 renderTable();
-updateRequirementState();
-setupDropZone('dropZoneDevice');
-setupDropZone('dropZonePin');
+setupDropZone('dropZoneDevice', 'device');
+setupDropZone('dropZonePin', 'pin');
+checkSyncImport();
 
-function setupDropZone(id) {
+// ═══════════════════════════════════════
+// DRAG & DROP
+// ═══════════════════════════════════════
+function setupDropZone(id, type) {
   const zone = document.getElementById(id);
-
-  zone.addEventListener('dragover', e => {
-    e.preventDefault();
-    zone.classList.add('dragover');
-  });
-
-  zone.addEventListener('dragleave', () => {
-    zone.classList.remove('dragover');
-  });
-
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
   zone.addEventListener('drop', e => {
     e.preventDefault();
     zone.classList.remove('dragover');
     const f = e.dataTransfer.files[0];
-    if (!f) return;
-    const type = id === 'dropZoneDevice' ? 'device' : 'pin';
-    handleFile(f, type);
+    if (f) handleFile(f, type);
   });
 }
 
+// ═══════════════════════════════════════
+// FILE HANDLING
+// ═══════════════════════════════════════
 function handleFile(file, type) {
   if (!file || !file.type.startsWith('image/')) return;
-
   const reader = new FileReader();
   reader.onload = e => {
-    currentImages[type] = e.target.result;
-    currentTexts[type] = '';
-
+    const dataUrl = e.target.result;
     if (type === 'device') {
-      document.getElementById('previewImgDevice').src = currentImages.device;
-      document.getElementById('previewWrapDevice').classList.add('visible');
+      deviceImage = dataUrl;
+      document.getElementById('photoImgDevice').src = dataUrl;
+      document.getElementById('photoWrapDevice').classList.add('visible');
       document.getElementById('scanDeviceBtn').disabled = false;
-      hideMiniStatus('device');
-      clearSNFieldIfNeeded();
+      document.getElementById('ocrOverlayDevice').classList.remove('visible');
+      document.getElementById('snFieldWrap').classList.remove('visible');
+      document.getElementById('nextBtn1Wrap').style.display = 'none';
+      hideStatus('device');
+      clearCanvas('canvasDevice');
     } else {
-      document.getElementById('previewImgPin').src = currentImages.pin;
-      document.getElementById('previewWrapPin').classList.add('visible');
+      pinImage = dataUrl;
+      document.getElementById('photoImgPin').src = dataUrl;
+      document.getElementById('photoWrapPin').classList.add('visible');
       document.getElementById('scanPinBtn').disabled = false;
-      hideMiniStatus('pin');
-      clearPINFieldIfNeeded();
+      document.getElementById('ocrOverlayPin').classList.remove('visible');
+      document.getElementById('pinFieldWrap').classList.remove('visible');
+      document.getElementById('noteWrap').classList.remove('visible');
+      document.getElementById('saveWrap').style.display = 'none';
+      hideStatus('pin');
+      clearCanvas('canvasPin');
     }
-
-    updateRequirementState();
-    maybeShowForm();
-    hideStatus();
   };
-
   reader.readAsDataURL(file);
 }
 
-function clearSNFieldIfNeeded() {
-  const field = document.getElementById('fieldSN');
-  if (currentFound.sn || !field.value.trim()) {
-    field.value = '';
-    field.className = 'field-input';
-    document.getElementById('confSN').innerHTML = '';
-    currentFound.sn = false;
-  }
-}
-
-function clearPINFieldIfNeeded() {
-  const field = document.getElementById('fieldPIN');
-  if (currentFound.pin || !field.value.trim()) {
-    field.value = '';
-    field.className = 'field-input';
-    document.getElementById('confPIN').innerHTML = '';
-    currentFound.pin = false;
-  }
-}
-
+// ═══════════════════════════════════════
+// OCR
+// ═══════════════════════════════════════
 async function runOCR(type) {
-  if (!currentImages[type]) return;
+  const imgSrc = type === 'device' ? deviceImage : pinImage;
+  if (!imgSrc) return;
 
-  const buttonId = type === 'device' ? 'scanDeviceBtn' : 'scanPinBtn';
-  document.getElementById(buttonId).disabled = true;
-  showMiniStatus(type, 'processing', 'Tesseract lädt… Text wird erkannt…');
+  const btnId  = type === 'device' ? 'scanDeviceBtn' : 'scanPinBtn';
+  const scanId = type === 'device' ? 'scanLineDevice' : 'scanLinePin';
+  document.getElementById(btnId).disabled = true;
+  document.getElementById(scanId).classList.add('running');
+  showStatus(type, 'processing', 'Tesseract wird geladen… Text wird erkannt…');
 
   try {
     const worker = await Tesseract.createWorker('deu+eng', 1, {
       logger: m => {
         if (m.status === 'recognizing text') {
-          showMiniStatus(type, 'processing', `Erkenne Text… ${Math.round(m.progress * 100)}%`);
+          showStatus(type, 'processing', `Erkenne Text… ${Math.round(m.progress * 100)}%`);
         }
       }
     });
-
-    const { data } = await worker.recognize(currentImages[type]);
+    const { data } = await worker.recognize(imgSrc);
     await worker.terminate();
 
-    currentTexts[type] = data.text || '';
+    document.getElementById(scanId).classList.remove('running');
 
     if (type === 'device') {
-      parseSerialResult(currentTexts.device);
-      showMiniStatus('device', 'success', 'Seriennummer erkannt — bitte prüfen');
+      const result = parseSerialNumber(data.text, data.words);
+      foundSN     = result.value;
+      snConfident = result.confident;
+      showOcrOverlay('device', foundSN, snConfident, 'Seriennummer');
+      highlightWords(
+        document.getElementById('canvasDevice'),
+        document.getElementById('photoImgDevice'),
+        data.words,
+        foundSN
+      );
+      // show editable field
+      const snField = document.getElementById('fieldSN');
+      snField.value = foundSN;
+      snField.className = 'field-input ' + (snConfident ? 'found' : 'not-found');
+      document.getElementById('hintSN').innerHTML = snConfident
+        ? '<span class="hint-ok">✓ Automatisch erkannt — bitte trotzdem prüfen</span>'
+        : '<span class="hint-warn">⚠ Nicht sicher erkannt — bitte manuell eingeben oder korrigieren</span>';
+      document.getElementById('snFieldWrap').classList.add('visible');
+      document.getElementById('nextBtn1Wrap').style.display = 'block';
+      showStatus('device', 'success', 'Erkennung abgeschlossen');
+
     } else {
-      parsePinResult(currentTexts.pin);
-      showMiniStatus('pin', 'success', 'Cloud-PIN erkannt — bitte prüfen');
-    }
-
-    maybeShowForm();
-
-    if (currentImages.device && currentImages.pin) {
-      showStatus('success', 'Beide Fotos vorhanden — Werte prüfen und speichern');
+      const result = parsePIN(data.text, data.words);
+      foundPIN     = result.value;
+      pinConfident = result.confident;
+      showOcrOverlay('pin', foundPIN, pinConfident, 'Cloud-PIN');
+      highlightWords(
+        document.getElementById('canvasPin'),
+        document.getElementById('photoImgPin'),
+        data.words,
+        foundPIN
+      );
+      const pinField = document.getElementById('fieldPIN');
+      pinField.value = foundPIN;
+      pinField.className = 'field-input ' + (pinConfident ? 'found' : 'not-found');
+      document.getElementById('hintPIN').innerHTML = pinConfident
+        ? '<span class="hint-ok">✓ 6-stellige PIN gefunden — bitte prüfen</span>'
+        : '<span class="hint-warn">⚠ Keine 6-stellige PIN gefunden — bitte manuell eingeben</span>';
+      document.getElementById('pinFieldWrap').classList.add('visible');
+      document.getElementById('noteWrap').classList.add('visible');
+      document.getElementById('saveWrap').style.display = 'block';
+      showStatus('pin', 'success', 'Erkennung abgeschlossen');
     }
   } catch (err) {
-    showMiniStatus(type, 'error', 'Fehler: ' + err.message);
+    document.getElementById(scanId).classList.remove('running');
+    showStatus(type, 'error', 'Fehler: ' + err.message);
   }
-
-  document.getElementById(buttonId).disabled = false;
+  document.getElementById(btnId).disabled = false;
 }
 
-function parseSerialResult(text) {
+// ═══════════════════════════════════════
+// PARSE — SERIENNUMMER
+// Erkennt anhand der vorangestellten Kennzeichnung
+// ═══════════════════════════════════════
+function parseSerialNumber(text, words) {
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const full  = text.replace(/\s+/g, ' ').trim();
+
+  // 1) Kennzeichnung direkt davor: S/N, Ser.-Nr., Serial No., Seriennummer, SN, SER.NR.
+  const labelPatterns = [
+    /(?:s\/n|ser\.?[-\s]?nr\.?|serial\s*(?:no\.?|number|nr\.?)|seriennummer|sn)[:\s#*]+([A-Z0-9][A-Z0-9\-]{5,22})/gi,
+    /(?:Ser\.?-Nr\.|Seriennummer|SERIAL\s*NO|S\/N|SN)[:\s]+([A-Z0-9][A-Z0-9\-]{5,22})/gi,
+  ];
+  for (const pattern of labelPatterns) {
+    pattern.lastIndex = 0;
+    const m = pattern.exec(full);
+    if (m && m[1]) {
+      return { value: normalizeSerial(m[1]), confident: true };
+    }
+  }
+
+  // 2) Lancom-typisches Format: Buchstaben + viele Ziffern (z.B. L150A012345678)
+  const lancomMatch = full.match(/\b([A-Z]{1,4}[0-9]{8,14})\b/);
+  if (lancomMatch) {
+    return { value: normalizeSerial(lancomMatch[1]), confident: true };
+  }
+
+  // 3) Barcode-Zeile (rein numerisch, 10–14 Stellen)
+  for (const line of lines) {
+    const numMatch = line.match(/^(\d{10,14})$/);
+    if (numMatch) {
+      return { value: numMatch[1], confident: true };
+    }
+  }
+
+  // 4) Fallback: längster alphanumerischer Token (min 8 Zeichen, enthält Ziffer)
+  const tokens = [...full.matchAll(/\b([A-Z0-9]{8,20})\b/g)]
+    .map(m => m[1])
+    .filter(v => /[0-9]/.test(v) && /[A-Z]/.test(v))
+    .sort((a, b) => b.length - a.length);
+  if (tokens.length) {
+    return { value: normalizeSerial(tokens[0]), confident: false };
+  }
+
+  return { value: '', confident: false };
+}
+
+// ═══════════════════════════════════════
+// PARSE — CLOUD-PIN (immer genau 6 Stellen)
+// ═══════════════════════════════════════
+function parsePIN(text, words) {
   const full = text.replace(/\s+/g, ' ').trim();
 
-  let sn = '';
-  let snConf = false;
+  // 1) Label "Cloud-PIN" / "PIN" direkt davor
+  const labelMatch = full.match(/(?:cloud[\s\-]?pin|cloudpin|pin)[:\s#]+(\d{6})/i);
+  if (labelMatch) {
+    return { value: labelMatch[1], confident: true };
+  }
 
-  const snPatterns = [
-    /(?:serial\s*(?:number|no\.?|nr\.?)|seriennummer|s\/n|sn)[:\s#]+([A-Z0-9\-]{6,25})/i,
-    /(?:^|\s)([A-Z]{2,6}[0-9]{6,16})(?:\s|$)/m,
-    /(?:^|\s)([0-9]{10,16})(?:\s|$)/m,
-    /\b([A-Z0-9]{8,25})\b/g
-  ];
+  // 2) Exakt 6-stellige Zahl, isoliert
+  const isolatedMatch = full.match(/(?<![0-9])(\d{6})(?![0-9])/);
+  if (isolatedMatch) {
+    return { value: isolatedMatch[1], confident: true };
+  }
 
-  for (let i = 0; i < snPatterns.length; i++) {
-    if (i < 3) {
-      const m = full.match(snPatterns[i]);
-      if (m) {
-        sn = normalizeSerial(m[1]);
-        snConf = true;
-        break;
-      }
-    } else {
-      const all = [...full.matchAll(snPatterns[i])].map(x => normalizeSerial(x[1]));
-      const filtered = all.filter(v => {
-        if (!v) return false;
-        if (v.length < 8 || v.length > 25) return false;
-        if (/^(LANCOM|CLOUD|PIN|SSID|MAC|WLAN)$/i.test(v)) return false;
-        if (/^[A-Z]+$/.test(v)) return false;
-        return /[0-9]/.test(v);
-      });
-
-      if (filtered.length) {
-        sn = filtered.sort((a, b) => b.length - a.length)[0];
-        snConf = true;
-        break;
+  // 3) OCR-Worte: Wort mit genau 6 Ziffern suchen
+  if (words && words.length) {
+    for (const w of words) {
+      const t = w.text.replace(/[^0-9]/g, '');
+      if (t.length === 6) {
+        return { value: t, confident: false };
       }
     }
   }
 
-  const snField = document.getElementById('fieldSN');
-  snField.value = sn;
-  snField.className = 'field-input ' + (snConf ? 'found' : 'not-found');
-  document.getElementById('confSN').innerHTML = snConf
-    ? '<span class="conf-ok">✓ automatisch aus Gerätefoto erkannt</span>'
-    : '<span class="conf-warn">⚠ nicht gefunden — bitte manuell eingeben</span>';
-
-  currentFound.sn = snConf;
+  return { value: '', confident: false };
 }
 
-function parsePinResult(text) {
-  const full = text.replace(/\s+/g, ' ').trim();
+// ═══════════════════════════════════════
+// OVERLAY & CANVAS HIGHLIGHT
+// ═══════════════════════════════════════
+function showOcrOverlay(type, value, confident, label) {
+  const overlay  = document.getElementById('ocrOverlay' + (type === 'device' ? 'Device' : 'Pin'));
+  const valueEl  = document.getElementById('ocrValue'   + (type === 'device' ? 'Device' : 'Pin'));
+  const subEl    = document.getElementById('ocrSub'     + (type === 'device' ? 'Device' : 'Pin'));
 
-  let pin = '';
-  let pinConf = false;
+  if (value) {
+    valueEl.textContent = value;
+    valueEl.className   = 'ocr-overlay-value found';
+    subEl.textContent   = confident ? '✓ automatisch erkannt' : '⚠ bitte prüfen';
+    subEl.className     = 'ocr-overlay-sub ' + (confident ? 'found' : 'not-found');
+  } else {
+    valueEl.textContent = 'Nicht gefunden';
+    valueEl.className   = 'ocr-overlay-value not-found';
+    subEl.textContent   = '⚠ Bitte manuell eingeben';
+    subEl.className     = 'ocr-overlay-sub not-found';
+  }
+  overlay.classList.add('visible');
+}
 
-  const pinPatterns = [
-    /(?:cloud[\s\-]?pin|cloudpin|pin)[:\s#]*([0-9]{6})/i,
-    /\bcloud[\s\-]?pin\b.{0,20}\b([0-9]{6})\b/i,
-    /\b([0-9]{6})\b/g
-  ];
+function highlightWords(canvas, imgEl, words, targetValue) {
+  if (!words || !words.length || !targetValue) return;
+  const imgRect = imgEl.getBoundingClientRect();
+  if (!imgRect.width || !imgRect.height) return;
 
-  for (let i = 0; i < pinPatterns.length; i++) {
-    if (i < 2) {
-      const m = full.match(pinPatterns[i]);
-      if (m) {
-        pin = m[1].trim();
-        pinConf = true;
-        break;
-      }
-    } else {
-      const all = [...full.matchAll(pinPatterns[i])].map(x => x[1]);
-      const filtered = all.filter(v => /^\d{6}$/.test(v));
+  canvas.style.width  = imgRect.width  + 'px';
+  canvas.style.height = imgRect.height + 'px';
+  canvas.style.left   = '0px';
+  canvas.style.top    = '0px';
+  canvas.width  = imgRect.width;
+  canvas.height = imgRect.height;
 
-      if (filtered.length) {
-        pin = filtered[0];
-        pinConf = true;
-        break;
-      }
+  const natW = imgEl.naturalWidth  || imgRect.width;
+  const natH = imgEl.naturalHeight || imgRect.height;
+
+  // account for object-fit: contain letterboxing
+  const scale = Math.min(imgRect.width / natW, imgRect.height / natH);
+  const offX  = (imgRect.width  - natW * scale) / 2;
+  const offY  = (imgRect.height - natH * scale) / 2;
+
+  const normalizedTarget = targetValue.replace(/[-\s]/g, '').toUpperCase();
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (const word of words) {
+    const wClean = (word.text || '').replace(/[-\s]/g, '').toUpperCase();
+    if (wClean.length < 3) continue;
+    if (normalizedTarget.includes(wClean) || wClean.includes(normalizedTarget)) {
+      const { x0, y0, x1, y1 } = word.bbox;
+      const rx = offX + x0 * scale;
+      const ry = offY + y0 * scale;
+      const rw = (x1 - x0) * scale;
+      const rh = (y1 - y0) * scale;
+
+      ctx.save();
+      ctx.fillStyle   = 'rgba(74,158,255,0.18)';
+      ctx.strokeStyle = '#4a9eff';
+      ctx.lineWidth   = 2;
+      ctx.shadowColor = '#4a9eff';
+      ctx.shadowBlur  = 6;
+      ctx.beginPath();
+      ctx.roundRect(rx, ry, rw, rh, 3);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
     }
   }
-
-  const pinField = document.getElementById('fieldPIN');
-  pinField.value = pin;
-  pinField.className = 'field-input ' + (pinConf ? 'found' : 'not-found');
-  document.getElementById('confPIN').innerHTML = pinConf
-    ? '<span class="conf-ok">✓ automatisch aus PIN-Zettel erkannt</span>'
-    : '<span class="conf-warn">⚠ nicht gefunden — bitte manuell eingeben</span>';
-
-  currentFound.pin = pinConf;
 }
 
-function normalizeSerial(value) {
-  return String(value || '')
-    .replace(/[^\w\-]/g, '')
-    .replace(/_/g, '')
-    .trim()
-    .toUpperCase();
+function clearCanvas(id) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function maybeShowForm() {
-  const hasBothPhotos = !!currentImages.device && !!currentImages.pin;
-  document.getElementById('resultForm').classList.toggle('visible', hasBothPhotos);
-  updateRequirementState();
+// ═══════════════════════════════════════
+// STEP NAVIGATION
+// ═══════════════════════════════════════
+function goToStep2() {
+  currentStep = 2;
+  document.getElementById('step1Card').classList.add('hidden');
+  document.getElementById('step2Card').classList.remove('hidden');
+  updateStepIndicator();
+  document.getElementById('step2Card').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function updateRequirementState() {
-  const chipDevice = document.getElementById('chipDevice');
-  const chipPin = document.getElementById('chipPin');
+function goToStep1() {
+  currentStep = 1;
+  document.getElementById('step2Card').classList.add('hidden');
+  document.getElementById('step1Card').classList.remove('hidden');
+  updateStepIndicator();
+}
 
-  if (currentImages.device) {
-    chipDevice.className = 'status-chip ok';
-    chipDevice.textContent = 'Gerätefoto vorhanden';
-  } else {
-    chipDevice.className = 'status-chip warn';
-    chipDevice.textContent = 'Gerätefoto fehlt';
+function updateStepIndicator() {
+  const dot1  = document.getElementById('dot1');
+  const dot2  = document.getElementById('dot2');
+  const dot3  = document.getElementById('dot3');
+  const line1 = document.getElementById('line1');
+  const line2 = document.getElementById('line2');
+
+  dot1.className  = 'step-dot';
+  dot2.className  = 'step-dot';
+  dot3.className  = 'step-dot';
+  line1.className = 'step-line';
+  line2.className = 'step-line';
+
+  if (currentStep === 1) {
+    dot1.classList.add('active');
+  } else if (currentStep === 2) {
+    dot1.classList.add('done');
+    dot2.classList.add('active');
+    line1.classList.add('done');
+  } else if (currentStep === 3) {
+    dot1.classList.add('done');
+    dot2.classList.add('done');
+    dot3.classList.add('done');
+    line1.classList.add('done');
+    line2.classList.add('done');
   }
-
-  if (currentImages.pin) {
-    chipPin.className = 'status-chip ok';
-    chipPin.textContent = 'PIN-Zettel vorhanden';
-  } else {
-    chipPin.className = 'status-chip warn';
-    chipPin.textContent = 'PIN-Zettel fehlt';
-  }
 }
 
+// ═══════════════════════════════════════
+// SAVE ENTRY
+// ═══════════════════════════════════════
 function saveEntry() {
-  const hasBothPhotos = !!currentImages.device && !!currentImages.pin;
-  if (!hasBothPhotos) {
-    showStatus('error', 'Es müssen 2 Fotos vorhanden sein: Gerät + PIN-Zettel');
-    return;
-  }
-
-  const sn = document.getElementById('fieldSN').value.trim();
-  const pinField = document.getElementById('fieldPIN');
-  const pin = pinField.value.replace(/\D/g, '').slice(0, 6);
-  pinField.value = pin;
+  const sn  = document.getElementById('fieldSN').value.trim();
+  const pin = document.getElementById('fieldPIN').value.trim();
 
   if (!sn && !pin) {
-    showStatus('error', 'Mindestens Seriennummer oder PIN eingeben');
+    showStatus('pin', 'error', 'Mindestens Seriennummer oder PIN eingeben');
     return;
   }
-
   if (pin && !/^\d{6}$/.test(pin)) {
-    showStatus('error', 'Die Cloud-PIN muss genau 6-stellig sein');
+    showStatus('pin', 'error', 'Cloud-PIN muss genau 6 Ziffern haben');
     return;
   }
 
-  const snConf = document.getElementById('fieldSN').classList.contains('found');
+  const snConf  = document.getElementById('fieldSN').classList.contains('found');
   const pinConf = document.getElementById('fieldPIN').classList.contains('found');
-  const auto = snConf && pinConf;
 
   entries.push({
-    id: Date.now(),
+    id:   Date.now(),
     sn,
     pin,
     note: document.getElementById('fieldNote').value.trim(),
     date: new Date().toLocaleString('de-AT'),
-    auto
+    auto: snConf && pinConf
   });
-
   saveData();
   renderTable();
-  resetForm();
-  showStatus('success', 'Eintrag gespeichert');
+  resetAll();
+
+  // Mark step 3 done briefly, then reset
+  currentStep = 3;
+  updateStepIndicator();
+  setTimeout(() => {
+    currentStep = 1;
+    updateStepIndicator();
+  }, 1500);
+
+  // Scroll to table to show saved entry
+  document.getElementById('tableBody').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ═══════════════════════════════════════
+// RESET
+// ═══════════════════════════════════════
+function resetAll() {
+  deviceImage  = null;
+  pinImage     = null;
+  foundSN      = '';
+  foundPIN     = '';
+  snConfident  = false;
+  pinConfident = false;
+
+  // Step 1
+  document.getElementById('photoWrapDevice').classList.remove('visible');
+  document.getElementById('photoImgDevice').src = '';
+  document.getElementById('fileInputDevice').value = '';
+  document.getElementById('scanDeviceBtn').disabled = true;
+  document.getElementById('ocrOverlayDevice').classList.remove('visible');
+  document.getElementById('snFieldWrap').classList.remove('visible');
+  document.getElementById('nextBtn1Wrap').style.display = 'none';
+  document.getElementById('fieldSN').value = '';
+  document.getElementById('fieldSN').className = 'field-input';
+  document.getElementById('hintSN').innerHTML = '';
+  clearCanvas('canvasDevice');
+  hideStatus('device');
+
+  // Step 2
+  document.getElementById('photoWrapPin').classList.remove('visible');
+  document.getElementById('photoImgPin').src = '';
+  document.getElementById('fileInputPin').value = '';
+  document.getElementById('scanPinBtn').disabled = true;
+  document.getElementById('ocrOverlayPin').classList.remove('visible');
+  document.getElementById('pinFieldWrap').classList.remove('visible');
+  document.getElementById('noteWrap').classList.remove('visible');
+  document.getElementById('saveWrap').style.display = 'none';
+  document.getElementById('fieldPIN').value = '';
+  document.getElementById('fieldPIN').className = 'field-input';
+  document.getElementById('fieldNote').value = '';
+  document.getElementById('hintPIN').innerHTML = '';
+  clearCanvas('canvasPin');
+  hideStatus('pin');
+
+  // Back to step 1
+  document.getElementById('step2Card').classList.add('hidden');
+  document.getElementById('step1Card').classList.remove('hidden');
+  currentStep = 1;
+  updateStepIndicator();
+}
+
+// ═══════════════════════════════════════
+// MANUAL ENTRY
+// ═══════════════════════════════════════
+function addManual() {
+  resetAll();
+  // fake images so the form appears
+  deviceImage = 'manual';
+  pinImage    = 'manual';
+  document.getElementById('snFieldWrap').classList.add('visible');
+  document.getElementById('hintSN').innerHTML = '<span class="hint-warn">⚠ manueller Eintrag</span>';
+  document.getElementById('nextBtn1Wrap').style.display = 'block';
+  // Jump directly to step 2 but show note + save
+  goToStep2();
+  document.getElementById('pinFieldWrap').classList.add('visible');
+  document.getElementById('hintPIN').innerHTML = '<span class="hint-warn">⚠ manueller Eintrag</span>';
+  document.getElementById('noteWrap').classList.add('visible');
+  document.getElementById('saveWrap').style.display = 'block';
+  document.getElementById('fieldSN').focus();
+}
+
+// ═══════════════════════════════════════
+// CAMERA
+// ═══════════════════════════════════════
+async function openCamera(target) {
+  cameraTarget = target;
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    document.getElementById('cameraVideo').srcObject = cameraStream;
+    document.getElementById('cameraModalTitle').textContent =
+      target === 'device' ? '📷 Gerät fotografieren' : '📷 PIN-Zettel fotografieren';
+    document.getElementById('cameraModal').classList.add('open');
+  } catch {
+    const type = target === 'device' ? 'device' : 'pin';
+    showStatus(type, 'error', 'Kamera-Zugriff verweigert oder nicht verfügbar');
+  }
+}
+
+function capturePhoto() {
+  const video  = document.getElementById('cameraVideo');
+  const canvas = document.getElementById('captureCanvas');
+  canvas.width  = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+  closeCamera();
+  handleFile(dataUrlToFile(dataUrl), cameraTarget);
+}
+
+function dataUrlToFile(dataUrl) {
+  const arr  = dataUrl.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) u8arr[n] = bstr.charCodeAt(n);
+  return new File([u8arr], 'photo.jpg', { type: mime });
+}
+
+function closeCamera() {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(t => t.stop());
+    cameraStream = null;
+  }
+  document.getElementById('cameraModal').classList.remove('open');
+}
+
+// ═══════════════════════════════════════
+// TABLE
+// ═══════════════════════════════════════
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  document.getElementById('entryCount').textContent =
+    entries.length + (entries.length === 1 ? ' Eintrag' : ' Einträge');
+  empty.style.display = entries.length ? 'none' : 'block';
+  tbody.innerHTML = entries.map((e, i) => `
+    <tr>
+      <td class="cell-date" style="color:var(--text3)">${i + 1}</td>
+      <td class="cell-sn">${esc(e.sn) || '<span style="color:var(--text3)">—</span>'}</td>
+      <td class="cell-pin">${esc(e.pin) || '<span style="color:var(--text3)">—</span>'}</td>
+      <td><span class="tag ${e.auto ? 'tag-ok' : 'tag-manual'}">${e.auto ? 'Auto' : 'Manuell'}</span></td>
+      <td class="cell-date">${esc(e.date)}</td>
+      <td class="cell-note" title="${escAttr(e.note || '')}">${esc(e.note || '')}</td>
+      <td><button class="btn btn-danger" onclick="deleteEntry(${e.id})">✕</button></td>
+    </tr>
+  `).join('');
 }
 
 function deleteEntry(id) {
@@ -1198,233 +1376,72 @@ function deleteEntry(id) {
   renderTable();
 }
 
-function addManual() {
-  currentImages.device = 'manual-device';
-  currentImages.pin = 'manual-pin';
-
-  document.getElementById('previewWrapDevice').classList.remove('visible');
-  document.getElementById('previewWrapPin').classList.remove('visible');
-
-  document.getElementById('fieldSN').value = '';
-  document.getElementById('fieldPIN').value = '';
-  document.getElementById('fieldNote').value = '';
-
-  document.getElementById('fieldSN').className = 'field-input';
-  document.getElementById('fieldPIN').className = 'field-input';
-  document.getElementById('confSN').innerHTML = '<span class="conf-warn">⚠ manueller Eintrag</span>';
-  document.getElementById('confPIN').innerHTML = '<span class="conf-warn">⚠ manueller Eintrag</span>';
-
-  currentFound.sn = false;
-  currentFound.pin = false;
-
-  hideMiniStatus('device');
-  hideMiniStatus('pin');
-  maybeShowForm();
-  document.getElementById('fieldSN').focus();
-  showStatus('success', 'Manueller Modus aktiv');
-}
-
-function resetForm() {
-  currentImages.device = null;
-  currentImages.pin = null;
-  currentTexts.device = '';
-  currentTexts.pin = '';
-  currentFound.sn = false;
-  currentFound.pin = false;
-
-  document.getElementById('previewWrapDevice').classList.remove('visible');
-  document.getElementById('previewWrapPin').classList.remove('visible');
-  document.getElementById('previewImgDevice').src = '';
-  document.getElementById('previewImgPin').src = '';
-
-  document.getElementById('fileInputDevice').value = '';
-  document.getElementById('fileInputPin').value = '';
-
-  document.getElementById('scanDeviceBtn').disabled = true;
-  document.getElementById('scanPinBtn').disabled = true;
-
-  document.getElementById('fieldSN').value = '';
-  document.getElementById('fieldPIN').value = '';
-  document.getElementById('fieldNote').value = '';
-
-  document.getElementById('fieldSN').className = 'field-input';
-  document.getElementById('fieldPIN').className = 'field-input';
-  document.getElementById('confSN').innerHTML = '';
-  document.getElementById('confPIN').innerHTML = '';
-
-  hideMiniStatus('device');
-  hideMiniStatus('pin');
-  hideStatus();
-  document.getElementById('resultForm').classList.remove('visible');
-  updateRequirementState();
-}
-
-function renderTable() {
-  const tbody = document.getElementById('tableBody');
-  const empty = document.getElementById('emptyState');
-  const count = document.getElementById('entryCount');
-
-  count.textContent = entries.length + (entries.length === 1 ? ' Eintrag' : ' Einträge');
-  empty.style.display = entries.length ? 'none' : 'block';
-
-  tbody.innerHTML = entries.map((e, i) => `
-    <tr>
-      <td class="cell-date" style="color:var(--text3)">${i + 1}</td>
-      <td class="cell-sn">${escapeHtml(e.sn || '') || '<span style="color:var(--text3)">—</span>'}</td>
-      <td class="cell-pin">${escapeHtml(e.pin || '') || '<span style="color:var(--text3)">—</span>'}</td>
-      <td><span class="tag ${e.auto ? 'tag-ok' : 'tag-manual'}">${e.auto ? 'Auto' : 'Manuell'}</span></td>
-      <td class="cell-date">${escapeHtml(e.date || '')}</td>
-      <td class="cell-note" title="${escapeHtmlAttr(e.note || '')}">${escapeHtml(e.note || '')}</td>
-      <td><button class="btn btn-danger" onclick="deleteEntry(${e.id})">✕</button></td>
-    </tr>
-  `).join('');
-}
-
 function exportCSV() {
-  if (!entries.length) {
-    showStatus('error', 'Keine Einträge zum Exportieren');
-    return;
-  }
-
-  const BOM = '\uFEFF';
-  const header = 'Nr.;Seriennummer;Cloud-PIN;Erkennung;Datum;Notiz\r\n';
+  if (!entries.length) { alert('Keine Einträge zum Exportieren'); return; }
+  const BOM  = '\uFEFF';
+  const head = 'Nr.;Seriennummer;Cloud-PIN;Erkennung;Datum;Notiz\r\n';
   const rows = entries.map((e, i) =>
-    [i + 1, e.sn, e.pin, e.auto ? 'Automatisch' : 'Manuell', e.date, e.note]
-      .map(v => '"' + String(v ?? '').replace(/"/g, '""') + '"')
-      .join(';')
+    [i+1, e.sn, e.pin, e.auto ? 'Automatisch' : 'Manuell', e.date, e.note]
+      .map(v => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(';')
   ).join('\r\n');
-
-  const blob = new Blob([BOM + header + rows], { type: 'text/csv;charset=utf-8' });
+  const blob = new Blob([BOM + head + rows], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'lancom_' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.download = 'lancom_' + new Date().toISOString().slice(0,10) + '.csv';
   a.click();
 }
 
 function clearAll() {
   if (!entries.length) return;
   if (!confirm(`Alle ${entries.length} Einträge löschen?`)) return;
-
   entries = [];
   saveData();
   renderTable();
-  showStatus('success', 'Tabelle geleert');
 }
 
 function saveData() {
   localStorage.setItem('lancom_entries', JSON.stringify(entries));
 }
 
-function showStatus(type, text) {
-  const bar = document.getElementById('statusBar');
-  const spinner = document.getElementById('statusSpinner');
-  bar.className = 'status-bar visible ' + type;
-  document.getElementById('statusText').textContent = text;
-  spinner.style.display = type === 'processing' ? 'block' : 'none';
+// ═══════════════════════════════════════
+// STATUS BARS
+// ═══════════════════════════════════════
+function showStatus(type, state, text) {
+  const id = type === 'device' ? 'statusDevice' : 'statusPin';
+  const bar = document.getElementById(id);
+  bar.className = 'status-bar visible ' + state;
+  document.getElementById('spinner' + (type === 'device' ? 'Device' : 'Pin')).style.display =
+    state === 'processing' ? 'block' : 'none';
+  document.getElementById('statusText' + (type === 'device' ? 'Device' : 'Pin')).textContent = text;
 }
 
-function hideStatus() {
-  document.getElementById('statusBar').className = 'status-bar';
+function hideStatus(type) {
+  const id = type === 'device' ? 'statusDevice' : 'statusPin';
+  document.getElementById(id).className = 'status-bar';
 }
 
-function showMiniStatus(type, status, text) {
-  const bar = document.getElementById(type === 'device' ? 'statusDevice' : 'statusPin');
-  const spinner = document.getElementById(type === 'device' ? 'spinnerDevice' : 'spinnerPin');
-  const textNode = document.getElementById(type === 'device' ? 'statusTextDevice' : 'statusTextPin');
-
-  bar.className = 'mini-status visible ' + status;
-  textNode.textContent = text;
-  spinner.style.display = status === 'processing' ? 'block' : 'none';
+// ═══════════════════════════════════════
+// NORMALIZE
+// ═══════════════════════════════════════
+function normalizeSerial(v) {
+  return String(v || '').replace(/[^\w\-]/g, '').replace(/_/g,'').trim().toUpperCase();
 }
 
-function hideMiniStatus(type) {
-  const bar = document.getElementById(type === 'device' ? 'statusDevice' : 'statusPin');
-  bar.className = 'mini-status';
-}
-
-async function openCamera(target) {
-  cameraTarget = target;
-
-  try {
-    cameraStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment' }
-    });
-
-    document.getElementById('cameraVideo').srcObject = cameraStream;
-    document.getElementById('cameraModalTitle').textContent =
-      target === 'device' ? '📷 Gerät fotografieren' : '📷 PIN-Zettel fotografieren';
-    document.getElementById('cameraModal').classList.add('open');
-  } catch {
-    showStatus('error', 'Kamera-Zugriff verweigert oder nicht verfügbar');
-  }
-}
-
-function capturePhoto() {
-  const video = document.getElementById('cameraVideo');
-  const canvas = document.getElementById('captureCanvas');
-
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-
-  const imageData = canvas.toDataURL('image/jpeg', 0.92);
-
-  if (cameraTarget === 'device') {
-    currentImages.device = imageData;
-    currentTexts.device = '';
-    document.getElementById('previewImgDevice').src = imageData;
-    document.getElementById('previewWrapDevice').classList.add('visible');
-    document.getElementById('scanDeviceBtn').disabled = false;
-    hideMiniStatus('device');
-    clearSNFieldIfNeeded();
-  } else if (cameraTarget === 'pin') {
-    currentImages.pin = imageData;
-    currentTexts.pin = '';
-    document.getElementById('previewImgPin').src = imageData;
-    document.getElementById('previewWrapPin').classList.add('visible');
-    document.getElementById('scanPinBtn').disabled = false;
-    hideMiniStatus('pin');
-    clearPINFieldIfNeeded();
-  }
-
-  updateRequirementState();
-  maybeShowForm();
-  closeCamera();
-}
-
-function closeCamera() {
-  if (cameraStream) {
-    cameraStream.getTracks().forEach(t => t.stop());
-    cameraStream = null;
-  }
-
-  cameraTarget = null;
-  document.getElementById('cameraModal').classList.remove('open');
-}
-
+// ═══════════════════════════════════════
+// SYNC
+// ═══════════════════════════════════════
 function openSyncModal() {
-  const modal = document.getElementById('syncModal');
-  modal.classList.add('open');
-
+  document.getElementById('syncModal').classList.add('open');
   if (!entries.length) {
     document.getElementById('syncLinkWrap').style.display = 'none';
     document.getElementById('syncEmpty').style.display = 'block';
     return;
   }
-
   document.getElementById('syncEmpty').style.display = 'none';
   document.getElementById('syncLinkWrap').style.display = 'block';
-
-  const data = JSON.stringify(entries.map(e => ({
-    s: e.sn,
-    p: e.pin,
-    n: e.note,
-    d: e.date,
-    a: e.auto
-  })));
-
+  const data    = JSON.stringify(entries.map(e => ({ s: e.sn, p: e.pin, n: e.note, d: e.date, a: e.auto })));
   const encoded = btoa(unescape(encodeURIComponent(data)));
-  const url = location.origin + location.pathname + '#sync=' + encoded;
+  const url     = location.origin + location.pathname + '#sync=' + encoded;
   document.getElementById('syncLinkInput').value = url;
   generateQR(url);
 }
@@ -1434,113 +1451,61 @@ function closeSyncModal() {
 }
 
 function copySyncLink() {
-  const input = document.getElementById('syncLinkInput');
-  navigator.clipboard.writeText(input.value).then(() => {
+  navigator.clipboard.writeText(document.getElementById('syncLinkInput').value).then(() => {
     const btn = document.getElementById('copyBtn');
     btn.textContent = '✓ Kopiert';
     btn.style.color = 'var(--green)';
-    btn.style.borderColor = 'var(--green)';
-    setTimeout(() => {
-      btn.textContent = 'Kopieren';
-      btn.style.color = '';
-      btn.style.borderColor = '';
-    }, 2000);
+    setTimeout(() => { btn.textContent = 'Kopieren'; btn.style.color = ''; }, 2000);
   });
 }
 
 function generateQR(url) {
   const canvas = document.getElementById('qrCanvas');
-  const size = 160;
-  canvas.width = size;
-  canvas.height = size;
-
+  const size   = 160;
+  canvas.width = canvas.height = size;
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, size, size);
-
   if (url.length > 2000) {
-    ctx.fillStyle = '#888';
-    ctx.font = '11px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('Link zu lang für QR.', size / 2, size / 2 - 8);
-    ctx.fillText('Bitte manuell kopieren.', size / 2, size / 2 + 8);
+    ctx.fillStyle = '#888'; ctx.font = '11px monospace'; ctx.textAlign = 'center';
+    ctx.fillText('Link zu lang für QR.', size/2, size/2-8);
+    ctx.fillText('Bitte manuell kopieren.', size/2, size/2+8);
     return;
   }
-
   const img = new Image();
   img.crossOrigin = 'anonymous';
-
-  img.onload = () => {
-    ctx.drawImage(img, 0, 0, size, size);
-  };
-
+  img.onload = () => ctx.drawImage(img, 0, 0, size, size);
   img.onerror = () => {
-    ctx.fillStyle = '#888';
-    ctx.font = '11px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('QR nicht verfügbar', size / 2, size / 2);
-    ctx.fillText('Link manuell kopieren', size / 2, size / 2 + 16);
+    ctx.fillStyle = '#888'; ctx.font = '11px monospace'; ctx.textAlign = 'center';
+    ctx.fillText('QR nicht verfügbar', size/2, size/2);
   };
-
   img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&data=' + encodeURIComponent(url);
 }
 
 function checkSyncImport() {
   const hash = location.hash;
   if (!hash.startsWith('#sync=')) return;
-
   try {
-    const encoded = hash.slice(6);
-    const data = JSON.parse(decodeURIComponent(escape(atob(encoded))));
-
-    const imported = data.map(e => ({
-      id: Date.now() + Math.random(),
-      sn: e.s || '',
-      pin: e.p || '',
-      note: e.n || '',
-      date: e.d || new Date().toLocaleString('de-AT'),
-      auto: !!e.a
-    }));
-
+    const data     = JSON.parse(decodeURIComponent(escape(atob(hash.slice(6)))));
     let added = 0;
-
-    for (const imp of imported) {
-      const exists = entries.some(ex => ex.sn === imp.sn && ex.pin === imp.pin);
-      if (!exists) {
-        entries.push(imp);
+    for (const e of data) {
+      if (!entries.some(ex => ex.sn === e.s && ex.pin === e.p)) {
+        entries.push({ id: Date.now() + Math.random(), sn: e.s||'', pin: e.p||'', note: e.n||'', date: e.d||new Date().toLocaleString('de-AT'), auto: !!e.a });
         added++;
       }
     }
-
-    if (added > 0) {
-      saveData();
-      renderTable();
-      showStatus('success', added + ' Eintrag' + (added > 1 ? 'e' : '') + ' aus Sync-Link importiert');
-    } else {
-      showStatus('success', 'Sync-Link gelesen — alle Einträge bereits vorhanden');
-    }
-
+    if (added > 0) { saveData(); renderTable(); }
     history.replaceState(null, '', location.pathname);
-  } catch (e) {
-    showStatus('error', 'Sync-Link konnte nicht gelesen werden');
-  }
+  } catch {}
 }
 
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+// ═══════════════════════════════════════
+// ESCAPE HELPERS
+// ═══════════════════════════════════════
+function esc(v) {
+  return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-function escapeHtmlAttr(value) {
-  return escapeHtml(value);
-}
-
-checkSyncImport();
+function escAttr(v) { return esc(v); }
 </script>
-
 </body>
 </html>
