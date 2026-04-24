@@ -2,336 +2,569 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lancom Scanner</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e0f11'/%3E%3Crect x='4' y='10' width='24' height='14' rx='3' fill='%23161719' stroke='%23363a3f' stroke-width='1.2'/%3E%3Crect x='6' y='12' width='20' height='10' rx='1.5' fill='%231e2023'/%3E%3Ccircle cx='9' cy='15' r='1.5' fill='%233ecf8e'/%3E%3Ccircle cx='13' cy='15' r='1.5' fill='%234a9eff' opacity='.8'/%3E%3Crect x='7' y='19' width='6' height='1.5' rx='.75' fill='%23363a3f'/%3E%3Crect x='15' y='19' width='6' height='1.5' rx='.75' fill='%23363a3f'/%3E%3Crect x='6' y='22.5' width='20' height='1.2' rx='.6' fill='%23161719'/%3E%3Ctext x='22.5' y='16.5' font-family='monospace' font-size='5.5' font-weight='700' fill='%234a9eff' text-anchor='middle'%3ES%2FN%3C%2Ftext%3E%3Cline x1='4' y1='8' x2='28' y2='8' stroke='%234a9eff' stroke-width='1.5' stroke-linecap='round' opacity='.6'/%3E%3C%2Fsvg%3E">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
   :root {
-    --bg:#0e0f11;--bg2:#161719;--bg3:#1e2023;--border:#2a2d31;--border2:#363a3f;
-    --text:#e2e4e8;--text2:#8a8f99;--text3:#555a63;
-    --accent:#4a9eff;--accent2:#2d7de0;--green:#3ecf8e;--red:#f56565;--yellow:#f6c90e;
-    --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+    --bg: #0e0f11;
+    --bg2: #161719;
+    --bg3: #1e2023;
+    --border: #2a2d31;
+    --border2: #363a3f;
+    --text: #e2e4e8;
+    --text2: #8a8f99;
+    --text3: #555a63;
+    --accent: #4a9eff;
+    --accent2: #2d7de0;
+    --green: #3ecf8e;
+    --red: #f56565;
+    --yellow: #f6c90e;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
   }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh;line-height:1.5;display:flex;flex-direction:column;}
-  header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:12px;background:var(--bg2);flex-shrink:0;flex-wrap:wrap;}
-  .logo{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;}
-  .logo span{color:var(--text3);}
-  .subtitle{font-size:12px;color:var(--text3);font-family:var(--mono);}
-  .header-right{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;}
-  .btn{font-family:var(--mono);font-size:12px;font-weight:500;padding:7px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;transition:all .15s;letter-spacing:.03em;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
-  .btn:hover{background:var(--border);}
-  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .btn-primary:hover{background:var(--accent2);border-color:var(--accent2);}
-  .btn-green{background:transparent;border-color:var(--green);color:var(--green);}
-  .btn-green:hover{background:rgba(62,207,142,.08);}
-  .btn-danger{background:transparent;border-color:transparent;color:var(--text3);padding:4px 8px;}
-  .btn-danger:hover{color:var(--red);background:rgba(245,101,101,.08);}
-  .btn:disabled{opacity:.4;cursor:not-allowed;}
-  .btn-lg{padding:12px 28px;font-size:13px;}
-  .main{flex:1;display:flex;flex-direction:column;align-items:center;padding:28px 20px 48px;overflow-y:auto;}
-  /* STEP DOTS */
-  .step-indicator{display:flex;align-items:center;margin-bottom:28px;margin-top:8px;}
-  .step-dot{width:32px;height:32px;border-radius:50%;border:2px solid var(--border2);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--text3);transition:all .3s;position:relative;z-index:1;flex-shrink:0;}
-  .step-dot.active{border-color:var(--accent);color:var(--accent);background:rgba(74,158,255,.1);box-shadow:0 0 0 4px rgba(74,158,255,.12);}
-  .step-dot.done{border-color:var(--green);color:var(--green);background:rgba(62,207,142,.1);}
-  .step-label{font-family:var(--mono);font-size:10px;position:absolute;top:38px;left:50%;transform:translateX(-50%);white-space:nowrap;color:var(--text3);letter-spacing:.06em;}
-  .step-dot.active .step-label{color:var(--accent);}
-  .step-dot.done .step-label{color:var(--green);}
-  .step-line{width:80px;height:2px;background:var(--border2);transition:background .3s;}
-  .step-line.done{background:var(--green);}
-  /* WIZARD */
-  .wizard-card{width:100%;max-width:640px;border:1px solid var(--border);border-radius:14px;background:var(--bg2);overflow:hidden;margin-bottom:36px;}
-  .wizard-card.hidden{display:none;}
-  .wizard-card-head{padding:16px 20px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);display:flex;align-items:center;gap:12px;}
-  .wizard-step-badge{font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(74,158,255,.12);border:1px solid rgba(74,158,255,.25);color:var(--accent);letter-spacing:.08em;text-transform:uppercase;}
-  .wizard-title{font-family:var(--mono);font-size:14px;color:var(--text);font-weight:600;}
-  .wizard-body{padding:20px;}
-  /* GUIDE */
-  .guide-image-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;background:var(--bg3);}
-  .guide-image-wrap svg{display:block;width:100%;}
-  .guide-caption{padding:8px 12px;font-family:var(--mono);font-size:10px;color:var(--text3);border-top:1px solid var(--border);letter-spacing:.06em;text-transform:uppercase;background:var(--bg2);}
-  /* CAPTURE ZONE */
-  .capture-zone{border:1.5px dashed var(--border2);border-radius:10px;position:relative;cursor:pointer;transition:border-color .2s,background .2s;background:var(--bg3);min-height:110px;display:flex;align-items:center;justify-content:center;flex-direction:column;margin-bottom:14px;-webkit-tap-highlight-color:transparent;}
-  .capture-zone:hover,.capture-zone.dragover{border-color:var(--accent);background:rgba(74,158,255,.04);}
-  .capture-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-  .capture-placeholder{text-align:center;pointer-events:none;padding:18px;}
-  .capture-icon{font-size:24px;margin-bottom:8px;opacity:.4;}
-  .capture-text{font-family:var(--mono);font-size:12px;color:var(--text2);margin-bottom:4px;}
-  .capture-sub{font-size:11px;color:var(--text3);}
-  /* PHOTO SECTION */
-  .photo-section{display:none;margin-bottom:14px;}
-  .photo-section.visible{display:block;}
-  .ocr-hint-banner{background:rgba(74,158,255,.1);border:1px solid rgba(74,158,255,.25);border-radius:8px 8px 0 0;padding:9px 14px;font-family:var(--mono);font-size:11px;color:var(--accent);display:none;align-items:center;gap:8px;}
-  .ocr-hint-banner.visible{display:flex;}
-  .ocr-hint-banner.found{background:rgba(62,207,142,.08);border-color:rgba(62,207,142,.25);color:var(--green);}
-  .photo-wrapper{position:relative;background:#000;overflow:hidden;border:1px solid var(--border);border-top:none;line-height:0;}
-  .photo-wrapper.solo{border-radius:10px;border-top:1px solid var(--border);}
-  .photo-img{width:100%;max-height:360px;object-fit:contain;display:block;}
-  /* SCAN LINE */
-  .scan-line{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);box-shadow:0 0 12px var(--accent);top:0;display:none;z-index:20;animation:scanDown 1.4s ease-in-out infinite;pointer-events:none;}
-  .scan-line.running{display:block;}
-  @keyframes scanDown{0%{top:0%;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
-  /* WORD CHIP OVERLAY */
-  .word-overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;}
-  .word-chip{
-    position:absolute;pointer-events:all;cursor:pointer;-webkit-tap-highlight-color:transparent;
-    border:1.5px solid rgba(255,255,255,.2);background:rgba(10,11,13,.55);backdrop-filter:blur(1px);
-    color:rgba(255,255,255,.8);font-family:var(--mono);font-size:10px;font-weight:500;
-    border-radius:4px;display:flex;align-items:center;justify-content:center;
-    padding:2px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-    transition:border-color .12s,background .12s,transform .1s,box-shadow .12s,color .12s;
-    user-select:none;min-width:26px;min-height:20px;
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    min-height: 100vh;
+    line-height: 1.5;
   }
-  .word-chip:hover,.word-chip:active{border-color:var(--accent);background:rgba(74,158,255,.45);color:#fff;transform:scale(1.1);z-index:30;}
-  .word-chip.candidate{border-color:rgba(74,158,255,.7);background:rgba(74,158,255,.2);color:var(--accent);font-weight:600;}
-  .word-chip.selected{border-color:var(--green);background:rgba(62,207,142,.28);color:var(--green);font-weight:600;box-shadow:0 0 10px rgba(62,207,142,.5);z-index:25;}
-  .word-chip.selected:hover{border-color:var(--green);background:rgba(62,207,142,.4);color:#fff;}
-  /* RESULT FIELD */
-  .result-field-wrap{display:none;margin-bottom:14px;}
-  .result-field-wrap.visible{display:block;}
-  .field-label{font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
-  .field-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:10px 13px;font-family:var(--mono);font-size:15px;color:var(--text);outline:none;transition:border-color .15s;letter-spacing:.04em;}
-  .field-input:focus{border-color:var(--accent);}
-  .field-input.found{border-color:var(--green);}
-  .field-input.manual{border-color:var(--yellow);}
-  .field-hint{font-size:11px;font-family:var(--mono);margin-top:5px;}
-  .hint-ok{color:var(--green);} .hint-warn{color:var(--yellow);}
-  .note-wrap{display:none;margin-bottom:14px;}
-  .note-wrap.visible{display:block;}
-  .note-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--text);outline:none;transition:border-color .15s;}
-  .note-input:focus{border-color:var(--accent);}
-  /* ACTION ROW */
-  .action-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
-  .action-row .btn{flex:1;text-align:center;}
-  /* STATUS */
-  .status-bar{padding:10px 14px;border-radius:8px;font-family:var(--mono);font-size:11px;display:none;align-items:center;gap:10px;margin-bottom:12px;}
-  .status-bar.visible{display:flex;}
-  .status-bar.processing{background:rgba(74,158,255,.08);border:1px solid rgba(74,158,255,.2);color:var(--accent);}
-  .status-bar.success{background:rgba(62,207,142,.08);border:1px solid rgba(62,207,142,.2);color:var(--green);}
-  .status-bar.error{background:rgba(245,101,101,.08);border:1px solid rgba(245,101,101,.2);color:var(--red);}
-  .spinner{width:13px;height:13px;border:2px solid rgba(74,158,255,.3);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  /* TABLE */
-  .section-sep{width:100%;max-width:640px;border:none;border-top:1px solid var(--border);margin:0 0 28px;}
-  .table-section{width:100%;max-width:900px;}
-  .table-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-  .table-title{font-family:var(--mono);font-size:12px;color:var(--text2);letter-spacing:.06em;text-transform:uppercase;}
-  .entry-count{font-family:var(--mono);font-size:11px;color:var(--text3);background:var(--bg3);border:1px solid var(--border);padding:2px 8px;border-radius:20px;}
-  .table-actions{margin-left:auto;display:flex;gap:8px;}
-  .table-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--bg2);}
-  table{width:100%;border-collapse:collapse;}
-  thead{background:var(--bg3);}
-  th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--border);font-weight:500;}
-  td{padding:10px 16px;border-bottom:1px solid var(--border);vertical-align:middle;}
-  tr:last-child td{border-bottom:none;}
-  tr:hover td{background:rgba(255,255,255,.02);}
-  .cell-sn{font-family:var(--mono);font-size:13px;color:var(--text);}
-  .cell-pin{font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:.08em;}
-  .cell-date{font-family:var(--mono);font-size:11px;color:var(--text3);}
-  .cell-note{font-size:12px;color:var(--text2);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .tag{display:inline-block;font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:4px;}
-  .tag-ok{background:rgba(62,207,142,.12);color:var(--green);}
-  .tag-manual{background:rgba(246,201,14,.12);color:var(--yellow);}
-  .empty-state{text-align:center;padding:50px 20px;color:var(--text3);}
-  .empty-icon{font-size:28px;margin-bottom:10px;opacity:.3;}
-  .empty-text{font-family:var(--mono);font-size:12px;}
-  /* MODALS */
-  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:100;}
-  .modal-bg.open{display:flex;}
-  .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:20px;width:360px;max-width:95vw;}
-  .modal-title{font-family:var(--mono);font-size:13px;color:var(--text);margin-bottom:16px;font-weight:600;}
-  video{width:100%;border-radius:8px;background:#000;display:block;margin-bottom:12px;}
-  .modal-btns{display:flex;gap:8px;}
-  .modal-btns .btn{flex:1;}
-  #syncLinkInput{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-family:var(--mono);font-size:11px;color:var(--accent);outline:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  ::-webkit-scrollbar{width:6px;}
-  ::-webkit-scrollbar-track{background:transparent;}
-  ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
-  @media(max-width:680px){.action-row{flex-direction:column;}.step-line{width:50px;}}
+
+  /* Header */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg2);
+  }
+  .logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .logo span { color: var(--text3); }
+  header .subtitle {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: var(--mono);
+  }
+  .header-right { margin-left: auto; display: flex; gap: 8px; }
+
+  /* Buttons */
+  .btn {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--border); border-color: var(--border2); }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--accent2); border-color: var(--accent2); }
+  .btn-green {
+    background: transparent;
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .btn-green:hover { background: rgba(62,207,142,0.08); }
+  .btn-danger {
+    background: transparent;
+    border-color: transparent;
+    color: var(--text3);
+    padding: 4px 8px;
+  }
+  .btn-danger:hover { color: var(--red); border-color: transparent; background: rgba(245,101,101,0.08); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Layout */
+  .main { display: flex; height: calc(100vh - 53px); }
+
+  /* Left panel */
+  .panel-left {
+    width: 380px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Drop zone */
+  .drop-zone {
+    margin: 16px;
+    border: 1.5px dashed var(--border2);
+    border-radius: 10px;
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg2);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--accent);
+    background: rgba(74,158,255,0.04);
+  }
+  .drop-zone input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .drop-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    opacity: 0.5;
+  }
+  .drop-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 4px;
+  }
+  .drop-sub { font-size: 11px; color: var(--text3); }
+
+  /* Camera btn */
+  .camera-row {
+    margin: 0 16px 16px;
+    display: flex;
+    gap: 8px;
+  }
+  .camera-row .btn { flex: 1; text-align: center; }
+
+  /* Preview */
+  .preview-wrap {
+    margin: 0 16px 16px;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    display: none;
+  }
+  .preview-wrap.visible { display: block; }
+  .preview-wrap img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: contain;
+    display: block;
+  }
+  .preview-label {
+    position: absolute; top: 8px; left: 8px;
+    background: rgba(0,0,0,0.7);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text2);
+    padding: 3px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  /* OCR Result form */
+  .result-form {
+    margin: 0 16px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .result-form.visible { display: flex; }
+  .field-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 5px;
+  }
+  .field-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field-input:focus { border-color: var(--accent); }
+  .field-input.found { border-color: var(--green); }
+  .field-input.not-found { border-color: var(--yellow); }
+  .field-confidence {
+    font-size: 10px;
+    font-family: var(--mono);
+    margin-top: 4px;
+  }
+  .conf-ok { color: var(--green); }
+  .conf-warn { color: var(--yellow); }
+
+  .note-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .note-input:focus { border-color: var(--accent); }
+
+  .save-row {
+    display: flex; gap: 8px; margin-top: 4px;
+  }
+  .save-row .btn { flex: 1; }
+
+  /* Status bar */
+  .status-bar {
+    margin: 12px 16px 16px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+  .status-bar.visible { display: flex; }
+  .status-bar.processing {
+    background: rgba(74,158,255,0.08);
+    border: 1px solid rgba(74,158,255,0.2);
+    color: var(--accent);
+  }
+  .status-bar.success {
+    background: rgba(62,207,142,0.08);
+    border: 1px solid rgba(62,207,142,0.2);
+    color: var(--green);
+  }
+  .status-bar.error {
+    background: rgba(245,101,101,0.08);
+    border: 1px solid rgba(245,101,101,0.2);
+    color: var(--red);
+  }
+  .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(74,158,255,0.3);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Right panel - table */
+  .panel-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .table-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    background: var(--bg2);
+  }
+  .table-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text2);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .entry-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .table-actions { margin-left: auto; display: flex; gap: 8px; }
+
+  .table-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead {
+    position: sticky; top: 0;
+    background: var(--bg2);
+    z-index: 2;
+  }
+  th {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .cell-sn {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+  .cell-pin {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  .cell-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+  .cell-note {
+    font-size: 12px;
+    color: var(--text2);
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text3);
+  }
+  .empty-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.3; }
+  .empty-text { font-family: var(--mono); font-size: 12px; }
+
+  /* Tag */
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+  }
+  .tag-ok { background: rgba(62,207,142,0.12); color: var(--green); }
+  .tag-manual { background: rgba(246,201,14,0.12); color: var(--yellow); }
+
+  /* Camera modal */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+    display: none;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 20px;
+    width: 360px;
+    max-width: 95vw;
+  }
+  .modal-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  video {
+    width: 100%;
+    border-radius: 8px;
+    background: #000;
+    display: block;
+    margin-bottom: 12px;
+  }
+  .modal-btns { display: flex; gap: 8px; }
+  .modal-btns .btn { flex: 1; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* Mobile */
+  @media (max-width: 680px) {
+    .main { flex-direction: column; height: auto; }
+    .panel-left { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
+    .panel-right { min-height: 300px; }
+    header { padding: 12px 16px; }
+    .header-right .btn span { display: none; }
+  }
 </style>
 </head>
 <body>
+
 <header>
   <div>
     <div class="logo">Lancom<span>/</span>Scanner</div>
-    <div class="subtitle">Seriennummer &amp; Cloud-PIN erfassen</div>
+    <div class="subtitle">Cloud-PIN &amp; Seriennummer Erfassung</div>
   </div>
   <div class="header-right">
-    <button class="btn" onclick="addManual()">+ Manuell</button>
-    <button class="btn" onclick="openSyncModal()" style="border-color:var(--accent);color:var(--accent)">🔗 Sync</button>
-    <button class="btn btn-green" onclick="exportCSV()">⬇ CSV</button>
-    <button class="btn" onclick="clearAll()" style="color:var(--text3)">Leeren</button>
+    <button class="btn" onclick="openSyncModal()" style="border-color:var(--accent);color:var(--accent)">🔗 Sync-Link</button>
+    <button class="btn btn-green" onclick="exportCSV()">⬇ CSV Export</button>
+    <button class="btn" onclick="clearAll()" style="color:var(--text3)">Tabelle leeren</button>
   </div>
 </header>
 
 <div class="main">
-  <div class="step-indicator">
-    <div class="step-dot active" id="dot1">1<span class="step-label">Gerät</span></div>
-    <div class="step-line" id="line1"></div>
-    <div class="step-dot" id="dot2">2<span class="step-label">PIN-Zettel</span></div>
-    <div class="step-line" id="line2"></div>
-    <div class="step-dot" id="dot3">✓<span class="step-label">Speichern</span></div>
-  </div>
+  <!-- Left: Upload + OCR -->
+  <div class="panel-left">
 
-  <!-- STEP 1 -->
-  <div class="wizard-card" id="step1Card">
-    <div class="wizard-card-head">
-      <span class="wizard-step-badge">Schritt 1 von 2</span>
-      <span class="wizard-title">Gerät fotografieren — Seriennummer</span>
+    <div class="drop-zone" id="dropZone">
+      <input type="file" accept="image/*" id="fileInput" onchange="handleFile(this.files[0])">
+      <div class="drop-icon">📄</div>
+      <div class="drop-title">Foto hierher ziehen oder klicken</div>
+      <div class="drop-sub">JPG, PNG, HEIC — max. 20 MB</div>
     </div>
-    <div class="wizard-body">
-      <div class="guide-image-wrap">
-        <svg viewBox="0 0 580 155" xmlns="http://www.w3.org/2000/svg">
-          <rect width="580" height="155" fill="#1e2023"/>
-          <rect x="40" y="22" width="240" height="110" rx="8" fill="#2a2d31" stroke="#363a3f" stroke-width="1.5"/>
-          <rect x="52" y="34" width="216" height="86" rx="4" fill="#1e2023"/>
-          <circle cx="70" cy="48" r="3.5" fill="#3ecf8e" opacity=".8"/>
-          <circle cx="84" cy="48" r="3.5" fill="#4a9eff" opacity=".7"/>
-          <circle cx="98" cy="48" r="3.5" fill="#4a9eff" opacity=".4"/>
-          <rect x="60" y="89" width="24" height="11" rx="2" fill="#363a3f"/>
-          <rect x="90" y="89" width="24" height="11" rx="2" fill="#363a3f"/>
-          <rect x="120" y="89" width="24" height="11" rx="2" fill="#363a3f"/>
-          <rect x="52" y="104" width="216" height="17" rx="0" fill="#161719"/>
-          <text x="60" y="116" font-family="monospace" font-size="7.5" fill="#555a63">S/N:</text>
-          <text x="78" y="116" font-family="monospace" font-size="7.5" fill="#8a8f99">L150A012345678</text>
-          <rect x="74" y="108" width="106" height="11" rx="2" fill="rgba(74,158,255,.12)" stroke="#4a9eff" stroke-width="1.2" stroke-dasharray="3,2"/>
-          <line x1="290" y1="114" x2="184" y2="114" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#a1)"/>
-          <defs><marker id="a1" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 Z" fill="#4a9eff"/></marker></defs>
-          <rect x="300" y="35" width="240" height="86" rx="6" fill="rgba(74,158,255,.07)" stroke="rgba(74,158,255,.2)" stroke-width="1"/>
-          <text x="316" y="57" font-family="monospace" font-size="9" fill="#4a9eff">SERIENNUMMER</text>
-          <text x="316" y="73" font-family="monospace" font-size="8" fill="#8a8f99">Label auf der Geräteunterseite</text>
-          <text x="316" y="91" font-family="monospace" font-size="10" fill="#e2e4e8" font-weight="600">S/N: L150A012345678</text>
-          <text x="316" y="109" font-family="monospace" font-size="8" fill="#555a63">Kennzeichnung steht direkt davor</text>
-        </svg>
-        <div class="guide-caption">📍 Seriennummer auf dem Geräte-Etikett — Kennzeichnung „S/N:" steht davor</div>
-      </div>
-      <div class="capture-zone" id="dropZoneDevice">
-        <input type="file" accept="image/*" id="fileInputDevice" onchange="handleFile(this.files[0],'device')">
-        <div class="capture-placeholder">
-          <div class="capture-icon">🖥️</div>
-          <div class="capture-text">Foto hochladen oder hier klicken</div>
-          <div class="capture-sub">Das Etikett mit der Seriennummer muss sichtbar sein</div>
-        </div>
-      </div>
-      <div class="photo-section" id="photoSectionDevice">
-        <div class="ocr-hint-banner" id="hintBannerDevice">
-          <span>👆</span><span id="hintBannerTextDevice">Erst „Text erkennen" drücken</span>
-        </div>
-        <div class="photo-wrapper" id="photoWrapDevice">
-          <img class="photo-img" id="photoImgDevice" alt="Gerät">
-          <div class="scan-line" id="scanLineDevice"></div>
-          <div class="word-overlay" id="wordOverlayDevice"></div>
-        </div>
-      </div>
-      <div class="result-field-wrap" id="snFieldWrap">
-        <div class="field-label">Seriennummer — im Bild antippen oder hier bearbeiten</div>
-        <input class="field-input" id="fieldSN" type="text" placeholder="z.B. L150A012345678" oninput="onManualInput('device')">
-        <div class="field-hint" id="hintSN"></div>
-      </div>
-      <div class="action-row">
-        <button class="btn" onclick="openCamera('device')">📷 Kamera</button>
-        <button class="btn btn-primary" id="scanDeviceBtn" onclick="runOCR('device')" disabled>⚡ Text erkennen</button>
-      </div>
-      <div class="status-bar" id="statusDevice"><div class="spinner" id="spinnerDevice"></div><span id="statusTextDevice"></span></div>
-      <div id="nextBtn1Wrap" style="display:none;">
-        <button class="btn btn-primary btn-lg" style="width:100%" onclick="goToStep2()">Weiter → PIN-Zettel fotografieren</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- STEP 2 -->
-  <div class="wizard-card hidden" id="step2Card">
-    <div class="wizard-card-head">
-      <span class="wizard-step-badge">Schritt 2 von 2</span>
-      <span class="wizard-title">PIN-Zettel fotografieren — Cloud-PIN</span>
+    <div class="camera-row">
+      <button class="btn" onclick="openCamera()">📷 Kamera öffnen</button>
+      <button class="btn btn-primary" id="scanBtn" onclick="runOCR()" disabled>⚡ Text erkennen</button>
     </div>
-    <div class="wizard-body">
-      <div class="guide-image-wrap">
-        <svg viewBox="0 0 580 155" xmlns="http://www.w3.org/2000/svg">
-          <rect width="580" height="155" fill="#1e2023"/>
-          <rect x="55" y="12" width="175" height="130" rx="4" fill="#2a2d31" stroke="#363a3f" stroke-width="1.5"/>
-          <rect x="68" y="25" width="140" height="5" rx="2" fill="#363a3f"/>
-          <rect x="68" y="38" width="100" height="4" rx="2" fill="#2d3035"/>
-          <rect x="68" y="50" width="120" height="4" rx="2" fill="#2d3035"/>
-          <rect x="68" y="62" width="80" height="4" rx="2" fill="#2d3035"/>
-          <text x="68" y="90" font-family="monospace" font-size="8" fill="#555a63">Cloud-PIN:</text>
-          <text x="68" y="110" font-family="monospace" font-size="18" fill="#e2e4e8" font-weight="700" letter-spacing="5">123456</text>
-          <rect x="64" y="96" width="118" height="20" rx="3" fill="rgba(62,207,142,.12)" stroke="#3ecf8e" stroke-width="1.2" stroke-dasharray="3,2"/>
-          <line x1="295" y1="106" x2="186" y2="106" stroke="#3ecf8e" stroke-width="1.5" marker-end="url(#a2)"/>
-          <defs><marker id="a2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 Z" fill="#3ecf8e"/></marker></defs>
-          <rect x="308" y="35" width="236" height="86" rx="6" fill="rgba(62,207,142,.07)" stroke="rgba(62,207,142,.2)" stroke-width="1"/>
-          <text x="324" y="57" font-family="monospace" font-size="9" fill="#3ecf8e">CLOUD-PIN</text>
-          <text x="324" y="73" font-family="monospace" font-size="8" fill="#8a8f99">Immer genau 6 Ziffern:</text>
-          <text x="324" y="95" font-family="monospace" font-size="20" fill="#e2e4e8" font-weight="700" letter-spacing="6">123456</text>
-          <text x="324" y="112" font-family="monospace" font-size="8" fill="#555a63">Meist neben QR-Code auf dem Zettel</text>
-        </svg>
-        <div class="guide-caption">📍 Cloud-PIN = genau 6 Ziffern, meist neben dem QR-Code auf dem Beipackzettel</div>
+
+    <div class="preview-wrap" id="previewWrap">
+      <img id="previewImg" src="" alt="Vorschau">
+      <div class="preview-label">VORSCHAU</div>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+      <div class="spinner" id="statusSpinner"></div>
+      <span id="statusText"></span>
+    </div>
+
+    <div class="result-form" id="resultForm">
+      <div>
+        <div class="field-label">Seriennummer</div>
+        <input class="field-input" id="fieldSN" type="text" placeholder="z.B. 4034928301">
+        <div class="field-confidence" id="confSN"></div>
       </div>
-      <div class="capture-zone" id="dropZonePin">
-        <input type="file" accept="image/*" id="fileInputPin" onchange="handleFile(this.files[0],'pin')">
-        <div class="capture-placeholder">
-          <div class="capture-icon">📄</div>
-          <div class="capture-text">Foto hochladen oder hier klicken</div>
-          <div class="capture-sub">Die 6-stellige Cloud-PIN muss sichtbar sein</div>
-        </div>
+      <div>
+        <div class="field-label">Cloud-PIN</div>
+        <input class="field-input" id="fieldPIN" type="text" placeholder="z.B. 1234-5678-ABCD">
+        <div class="field-confidence" id="confPIN"></div>
       </div>
-      <div class="photo-section" id="photoSectionPin">
-        <div class="ocr-hint-banner" id="hintBannerPin">
-          <span>👆</span><span id="hintBannerTextPin">Erst „Text erkennen" drücken</span>
-        </div>
-        <div class="photo-wrapper" id="photoWrapPin">
-          <img class="photo-img" id="photoImgPin" alt="PIN-Zettel">
-          <div class="scan-line" id="scanLinePin"></div>
-          <div class="word-overlay" id="wordOverlayPin"></div>
-        </div>
-      </div>
-      <div class="result-field-wrap" id="pinFieldWrap">
-        <div class="field-label">Cloud-PIN (6 Stellen) — im Bild antippen oder hier bearbeiten</div>
-        <input class="field-input" id="fieldPIN" type="text" placeholder="z.B. 123456" maxlength="6" oninput="onManualInput('pin')">
-        <div class="field-hint" id="hintPIN"></div>
-      </div>
-      <div class="note-wrap" id="noteWrap">
-        <div class="field-label" style="margin-bottom:5px">Notiz (optional)</div>
+      <div>
+        <div class="field-label">Notiz (optional)</div>
         <input class="note-input" id="fieldNote" type="text" placeholder="z.B. Standort, Gerätename…">
       </div>
-      <div class="action-row">
-        <button class="btn" onclick="goToStep1()">← Zurück</button>
-        <button class="btn" onclick="openCamera('pin')">📷 Kamera</button>
-        <button class="btn btn-primary" id="scanPinBtn" onclick="runOCR('pin')" disabled>⚡ Text erkennen</button>
-      </div>
-      <div class="status-bar" id="statusPin"><div class="spinner" id="spinnerPin"></div><span id="statusTextPin"></span></div>
-      <div id="saveWrap" style="display:none;margin-top:4px;">
-        <button class="btn btn-green btn-lg" style="width:100%;font-size:14px" onclick="saveEntry()">✓ Eintrag speichern &amp; neues Gerät erfassen</button>
+      <div class="save-row">
+        <button class="btn btn-primary" onclick="saveEntry()">✓ Eintrag speichern</button>
+        <button class="btn" onclick="resetForm()">Abbrechen</button>
       </div>
     </div>
+
   </div>
 
-  <hr class="section-sep">
-  <div class="table-section">
+  <!-- Right: Table -->
+  <div class="panel-right">
     <div class="table-header">
       <span class="table-title">Erfasste Geräte</span>
       <span class="entry-count" id="entryCount">0 Einträge</span>
-      <div class="table-actions"><button class="btn btn-green" onclick="exportCSV()">⬇ CSV Export</button></div>
+      <div class="table-actions">
+        <button class="btn" onclick="addManual()">+ Manuell</button>
+      </div>
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>#</th><th>Seriennummer</th><th>Cloud-PIN</th><th>Erkennung</th><th>Datum</th><th>Notiz</th><th></th></tr></thead>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Seriennummer</th>
+            <th>Cloud-PIN</th>
+            <th>Erkennnung</th>
+            <th>Datum</th>
+            <th>Notiz</th>
+            <th></th>
+          </tr>
+        </thead>
         <tbody id="tableBody"></tbody>
       </table>
       <div class="empty-state" id="emptyState">
         <div class="empty-icon">📋</div>
-        <div class="empty-text">Noch keine Einträge</div>
+        <div class="empty-text">Noch keine Einträge — Foto hochladen oder manuell hinzufügen</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- CAMERA MODAL -->
+<!-- Sync modal -->
+<div class="modal-bg" id="syncModal">
+  <div class="modal" style="width:420px">
+    <div class="modal-title">🔗 Sync per Link</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">
+      Alle aktuellen Einträge werden in einen Link kodiert.<br>
+      Den Link am PC öffnen → Daten werden automatisch importiert.
+    </p>
+    <div id="syncLinkWrap" style="display:none">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Sync-Link</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <input id="syncLinkInput" readonly style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-family:var(--mono);font-size:11px;color:var(--accent);outline:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+        <button class="btn" onclick="copySyncLink()" id="copyBtn">Kopieren</button>
+      </div>
+      <div id="qrWrap" style="text-align:center;margin-bottom:12px">
+        <canvas id="qrCanvas" style="border-radius:8px;background:#fff;padding:10px"></canvas>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono)">QR-Code am Handy scannen</div>
+      </div>
+    </div>
+    <div id="syncEmpty" style="text-align:center;padding:20px 0;color:var(--text3);font-family:var(--mono);font-size:12px">Keine Einträge zum Synchronisieren</div>
+    <div class="modal-btns" style="margin-top:4px">
+      <button class="btn" onclick="closeSyncModal()">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Camera modal -->
 <div class="modal-bg" id="cameraModal">
   <div class="modal">
-    <div class="modal-title" id="cameraModalTitle">📷 Kamera</div>
+    <div class="modal-title">📷 Kamera</div>
     <video id="cameraVideo" autoplay playsinline></video>
     <div class="modal-btns">
       <button class="btn btn-primary" onclick="capturePhoto()">Foto aufnehmen</button>
@@ -340,443 +573,355 @@
   </div>
 </div>
 
-<!-- SYNC MODAL -->
-<div class="modal-bg" id="syncModal">
-  <div class="modal" style="width:420px">
-    <div class="modal-title">🔗 Sync per Link</div>
-    <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Alle Einträge in einen Link kodiert — am PC öffnen zum Importieren.</p>
-    <div id="syncLinkWrap" style="display:none">
-      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Sync-Link</div>
-      <div style="display:flex;gap:8px;margin-bottom:10px">
-        <input id="syncLinkInput" readonly>
-        <button class="btn" onclick="copySyncLink()" id="copyBtn">Kopieren</button>
-      </div>
-      <div id="qrWrap" style="text-align:center;margin-bottom:12px">
-        <canvas id="qrCanvas" style="border-radius:8px;background:#fff;padding:10px"></canvas>
-        <div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono)">QR-Code am Handy scannen</div>
-      </div>
-    </div>
-    <div id="syncEmpty" style="text-align:center;padding:20px 0;color:var(--text3);font-family:var(--mono);font-size:12px">Keine Einträge</div>
-    <div class="modal-btns" style="margin-top:4px"><button class="btn" onclick="closeSyncModal()">Schließen</button></div>
-  </div>
-</div>
-
 <canvas id="captureCanvas" style="display:none"></canvas>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js"></script>
 <script>
-var entries=JSON.parse(localStorage.getItem('lancom_entries')||'[]');
-var deviceImage=null,pinImage=null,cameraStream=null,cameraTarget=null,currentStep=1;
+let entries = JSON.parse(localStorage.getItem('lancom_entries') || '[]');
+let currentImage = null;
+let cameraStream = null;
 
+// Init
 renderTable();
-setupDrop('dropZoneDevice','device');
-setupDrop('dropZonePin','pin');
-checkSyncImport();
 
-function setupDrop(id,type){
-  var z=document.getElementById(id);
-  z.addEventListener('dragover',function(e){e.preventDefault();z.classList.add('dragover');});
-  z.addEventListener('dragleave',function(){z.classList.remove('dragover');});
-  z.addEventListener('drop',function(e){e.preventDefault();z.classList.remove('dragover');var f=e.dataTransfer.files[0];if(f)handleFile(f,type);});
-}
+// Drag & Drop
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  const f = e.dataTransfer.files[0];
+  if (f) handleFile(f);
+});
 
-function handleFile(file,type){
-  if(!file||!file.type.startsWith('image/'))return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    if(type==='device'){
-      deviceImage=e.target.result;
-      document.getElementById('photoImgDevice').src=deviceImage;
-      document.getElementById('photoSectionDevice').classList.add('visible');
-      document.getElementById('wordOverlayDevice').innerHTML='';
-      document.getElementById('hintBannerDevice').className='ocr-hint-banner visible';
-      document.getElementById('hintBannerTextDevice').textContent='Foto geladen — jetzt "Text erkennen" drücken';
-      document.getElementById('scanDeviceBtn').disabled=false;
-      document.getElementById('snFieldWrap').classList.remove('visible');
-      document.getElementById('nextBtn1Wrap').style.display='none';
-      hideStatus('device');
-    } else {
-      pinImage=e.target.result;
-      document.getElementById('photoImgPin').src=pinImage;
-      document.getElementById('photoSectionPin').classList.add('visible');
-      document.getElementById('wordOverlayPin').innerHTML='';
-      document.getElementById('hintBannerPin').className='ocr-hint-banner visible';
-      document.getElementById('hintBannerTextPin').textContent='Foto geladen — jetzt "Text erkennen" drücken';
-      document.getElementById('scanPinBtn').disabled=false;
-      document.getElementById('pinFieldWrap').classList.remove('visible');
-      document.getElementById('noteWrap').classList.remove('visible');
-      document.getElementById('saveWrap').style.display='none';
-      hideStatus('pin');
-    }
+function handleFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentImage = e.target.result;
+    document.getElementById('previewImg').src = currentImage;
+    document.getElementById('previewWrap').classList.add('visible');
+    document.getElementById('scanBtn').disabled = false;
+    document.getElementById('resultForm').classList.remove('visible');
+    hideStatus();
   };
   reader.readAsDataURL(file);
 }
 
-async function runOCR(type){
-  var img=type==='device'?deviceImage:pinImage;
-  if(!img)return;
-  var btnId=type==='device'?'scanDeviceBtn':'scanPinBtn';
-  var scanId=type==='device'?'scanLineDevice':'scanLinePin';
-  var overlayId=type==='device'?'wordOverlayDevice':'wordOverlayPin';
-  document.getElementById(btnId).disabled=true;
-  document.getElementById(scanId).classList.add('running');
-  document.getElementById(overlayId).innerHTML='';
-  showStatus(type,'processing','Tesseract wird geladen…');
+async function runOCR() {
+  if (!currentImage) return;
+  document.getElementById('scanBtn').disabled = true;
+  showStatus('processing', 'Tesseract lädt… Text wird erkannt…');
+
   try {
-    var worker=await Tesseract.createWorker('deu+eng',1,{
-      logger:function(m){if(m.status==='recognizing text')showStatus(type,'processing','Erkenne Text… '+Math.round(m.progress*100)+'%');}
-    });
-    var result=await worker.recognize(img);
-    await worker.terminate();
-    document.getElementById(scanId).classList.remove('running');
-    var data=result.data;
-    if(type==='device'){
-      var parsed=parseSerial(data.text,data.words);
-      renderChips('device',data.words,parsed.value);
-      applyOCRResult('device',parsed.value,parsed.confident);
-      var banner=document.getElementById('hintBannerDevice');
-      banner.className='ocr-hint-banner visible'+(parsed.value?' found':'');
-      document.getElementById('hintBannerTextDevice').textContent=parsed.value
-        ?'👆 Seriennummer erkannt — oder anderen Text im Bild antippen'
-        :'⚠ Nicht gefunden — gewünschten Text im Bild antippen';
-      showStatus(type,'success','Fertig — Text im Bild antippen zum Auswählen');
-    } else {
-      var parsed=parsePIN(data.text,data.words);
-      renderChips('pin',data.words,parsed.value);
-      applyOCRResult('pin',parsed.value,parsed.confident);
-      var banner=document.getElementById('hintBannerPin');
-      banner.className='ocr-hint-banner visible'+(parsed.value?' found':'');
-      document.getElementById('hintBannerTextPin').textContent=parsed.value
-        ?'👆 Cloud-PIN erkannt — oder anderen Text im Bild antippen'
-        :'⚠ Keine 6-stellige PIN — gewünschten Text im Bild antippen';
-      showStatus(type,'success','Fertig — Text im Bild antippen zum Auswählen');
-    }
-  } catch(err){
-    document.getElementById(scanId).classList.remove('running');
-    showStatus(type,'error','Fehler: '+err.message);
-  }
-  document.getElementById(btnId).disabled=false;
-}
-
-function renderChips(type,words,autoValue){
-  var sfx=type==='device'?'Device':'Pin';
-  var imgEl=document.getElementById('photoImg'+sfx);
-  var overlayEl=document.getElementById('wordOverlay'+sfx);
-  overlayEl.innerHTML='';
-  if(!words||!words.length)return;
-
-  // Use rAF to ensure layout is complete
-  requestAnimationFrame(function(){
-    var iW=imgEl.offsetWidth, iH=imgEl.offsetHeight;
-    var natW=imgEl.naturalWidth||iW, natH=imgEl.naturalHeight||iH;
-    var scale=Math.min(iW/natW, iH/natH);
-    var offX=(iW-natW*scale)/2, offY=(iH-natH*scale)/2;
-    var normAuto=(autoValue||'').replace(/[-\s]/g,'').toUpperCase();
-
-    words.forEach(function(word){
-      var text=(word.text||'').trim();
-      if(!text||text.length<2)return;
-      if((word.confidence||0)<20)return;
-
-      var b=word.bbox;
-      var cL=offX+b.x0*scale;
-      var cT=offY+b.y0*scale;
-      var cW=Math.max((b.x1-b.x0)*scale,28);
-      var cH=Math.max((b.y1-b.y0)*scale,20);
-
-      var chip=document.createElement('div');
-      chip.className='word-chip';
-      chip.textContent=text;
-      chip.style.cssText='left:'+cL+'px;top:'+cT+'px;width:'+cW+'px;height:'+cH+'px;';
-
-      var norm=text.replace(/[-\s]/g,'').toUpperCase();
-      var isMatch=normAuto&&norm.length>=3&&normAuto.includes(norm);
-
-      if(isMatch){
-        chip.classList.add('selected');
-      } else if(type==='device'&&looksLikeSN(text)){
-        chip.classList.add('candidate');
-      } else if(type==='pin'&&/^\d{6}$/.test(text.replace(/\D/g,'').slice(0,6))){
-        chip.classList.add('candidate');
+    const worker = await Tesseract.createWorker('deu+eng', 1, {
+      logger: m => {
+        if (m.status === 'recognizing text') {
+          showStatus('processing', `Erkenne Text… ${Math.round(m.progress * 100)}%`);
+        }
       }
-
-      chip.addEventListener('pointerdown',function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        selectChip(type,chip,text);
-      });
-      overlayEl.appendChild(chip);
     });
+
+    const { data } = await worker.recognize(currentImage);
+    await worker.terminate();
+
+    const raw = data.text;
+    parseOCRResult(raw);
+    showStatus('success', 'Text erkannt — Werte bitte prüfen');
+    document.getElementById('resultForm').classList.add('visible');
+
+  } catch (err) {
+    showStatus('error', 'Fehler: ' + err.message);
+  }
+
+  document.getElementById('scanBtn').disabled = false;
+}
+
+function parseOCRResult(text) {
+  // Normalize
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const full = text.replace(/\s+/g, ' ');
+
+  let sn = '', pin = '', snConf = false, pinConf = false;
+
+  // Serial number patterns (Lancom uses various labels)
+  const snPatterns = [
+    /(?:serial\s*(?:number|no\.?|nr\.?)|seriennummer|s\/n|sn)[:\s#]+([A-Z0-9\-]{6,20})/i,
+    /(?:^|\s)([A-Z]{2,4}[0-9]{6,12})(?:\s|$)/m,
+    /(?:^|\s)([0-9]{10,14})(?:\s|$)/m,
+  ];
+  for (const p of snPatterns) {
+    const m = full.match(p);
+    if (m) { sn = m[1].trim(); snConf = true; break; }
+  }
+
+  // Cloud PIN patterns
+  const pinPatterns = [
+    /(?:cloud[\s\-]?pin|pin)[:\s]+([A-Z0-9]{4}[\s\-][A-Z0-9]{4}[\s\-][A-Z0-9]{4,8})/i,
+    /(?:cloud[\s\-]?pin|pin)[:\s]+([A-Z0-9\-]{8,20})/i,
+    /\b([A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4,8})\b/,
+    /\b([0-9]{4}[\s\-][0-9]{4}[\s\-][0-9]{4,8})\b/,
+  ];
+  for (const p of pinPatterns) {
+    const m = full.match(p);
+    if (m) { pin = m[1].replace(/\s/g, '-').trim(); pinConf = true; break; }
+  }
+
+  const snField = document.getElementById('fieldSN');
+  const pinField = document.getElementById('fieldPIN');
+
+  snField.value = sn;
+  pinField.value = pin;
+
+  snField.className = 'field-input ' + (snConf ? 'found' : 'not-found');
+  pinField.className = 'field-input ' + (pinConf ? 'found' : 'not-found');
+
+  document.getElementById('confSN').innerHTML = snConf
+    ? '<span class="conf-ok">✓ automatisch erkannt</span>'
+    : '<span class="conf-warn">⚠ nicht gefunden — bitte manuell eingeben</span>';
+  document.getElementById('confPIN').innerHTML = pinConf
+    ? '<span class="conf-ok">✓ automatisch erkannt</span>'
+    : '<span class="conf-warn">⚠ nicht gefunden — bitte manuell eingeben</span>';
+
+  document.getElementById('fieldNote').value = '';
+}
+
+function saveEntry() {
+  const sn = document.getElementById('fieldSN').value.trim();
+  const pin = document.getElementById('fieldPIN').value.trim();
+  if (!sn && !pin) {
+    showStatus('error', 'Mindestens Seriennummer oder PIN eingeben');
+    return;
+  }
+  const snConf = document.getElementById('fieldSN').classList.contains('found');
+  const pinConf = document.getElementById('fieldPIN').classList.contains('found');
+  const auto = snConf && pinConf;
+
+  entries.push({
+    id: Date.now(),
+    sn,
+    pin,
+    note: document.getElementById('fieldNote').value.trim(),
+    date: new Date().toLocaleString('de-AT'),
+    auto
   });
+  saveData();
+  renderTable();
+  resetForm();
+  showStatus('success', 'Eintrag gespeichert');
 }
 
-function selectChip(type,chip,rawText){
-  var sfx=type==='device'?'Device':'Pin';
-  document.querySelectorAll('#wordOverlay'+sfx+' .word-chip').forEach(function(c){c.classList.remove('selected');});
-  chip.classList.add('selected');
-
-  var value=rawText.trim();
-  if(type==='pin'){
-    value=value.replace(/\D/g,'').slice(0,6);
-  } else {
-    value=normSerial(value);
-  }
-
-  if(type==='device'){
-    var f=document.getElementById('fieldSN');
-    f.value=value; f.className='field-input found';
-    document.getElementById('hintSN').innerHTML='<span class="hint-ok">✓ Aus Bild ausgewählt — bei Bedarf korrigieren</span>';
-    document.getElementById('snFieldWrap').classList.add('visible');
-    document.getElementById('nextBtn1Wrap').style.display='block';
-  } else {
-    var f=document.getElementById('fieldPIN');
-    f.value=value; f.className='field-input '+(value.length===6?'found':'manual');
-    document.getElementById('hintPIN').innerHTML=value.length===6
-      ?'<span class="hint-ok">✓ 6-stellige PIN ausgewählt</span>'
-      :'<span class="hint-warn">⚠ Nicht 6 Stellen — bitte korrigieren</span>';
-    document.getElementById('pinFieldWrap').classList.add('visible');
-    document.getElementById('noteWrap').classList.add('visible');
-    document.getElementById('saveWrap').style.display='block';
-  }
+function deleteEntry(id) {
+  entries = entries.filter(e => e.id !== id);
+  saveData();
+  renderTable();
 }
 
-function applyOCRResult(type,value,confident){
-  if(type==='device'){
-    var f=document.getElementById('fieldSN');
-    f.value=value; f.className='field-input '+(value?(confident?'found':'manual'):'');
-    document.getElementById('hintSN').innerHTML=value
-      ?(confident?'<span class="hint-ok">✓ Automatisch erkannt — prüfen oder anderes antippen</span>'
-                 :'<span class="hint-warn">⚠ Unsicher — prüfen oder anderes antippen</span>')
-      :'<span class="hint-warn">⚠ Nicht gefunden — Text im Bild antippen</span>';
-    document.getElementById('snFieldWrap').classList.add('visible');
-    document.getElementById('nextBtn1Wrap').style.display=value?'block':'none';
-  } else {
-    var f=document.getElementById('fieldPIN');
-    f.value=value; f.className='field-input '+(value?(confident?'found':'manual'):'');
-    document.getElementById('hintPIN').innerHTML=value
-      ?(confident?'<span class="hint-ok">✓ 6-stellige PIN gefunden — prüfen oder anderes antippen</span>'
-                 :'<span class="hint-warn">⚠ Unsicher — prüfen oder anderes antippen</span>')
-      :'<span class="hint-warn">⚠ Keine 6-stellige PIN — Text im Bild antippen</span>';
-    document.getElementById('pinFieldWrap').classList.add('visible');
-    document.getElementById('noteWrap').classList.add('visible');
-    document.getElementById('saveWrap').style.display='block';
-  }
-}
-
-function onManualInput(type){
-  if(type==='device'){
-    var v=document.getElementById('fieldSN').value.trim();
-    document.getElementById('fieldSN').className='field-input manual';
-    document.getElementById('hintSN').innerHTML='<span class="hint-warn">✏ Manuell eingegeben</span>';
-    document.getElementById('nextBtn1Wrap').style.display=v?'block':'none';
-    document.querySelectorAll('#wordOverlayDevice .word-chip').forEach(function(c){c.classList.remove('selected');});
-  } else {
-    var raw=document.getElementById('fieldPIN').value.replace(/\D/g,'').slice(0,6);
-    document.getElementById('fieldPIN').value=raw;
-    document.getElementById('fieldPIN').className='field-input manual';
-    document.getElementById('hintPIN').innerHTML=raw.length===6
-      ?'<span class="hint-ok">✓ 6 Stellen ✏ manuell</span>'
-      :'<span class="hint-warn">✏ Noch '+(6-raw.length)+' Stellen fehlen</span>';
-    document.querySelectorAll('#wordOverlayPin .word-chip').forEach(function(c){c.classList.remove('selected');});
-  }
-}
-
-function parseSerial(text,words){
-  var full=text.replace(/\s+/g,' ').trim();
-  // 1) label-based
-  var lm=full.match(/(?:s\/n|ser\.?[\s\-]?nr\.?|serial[\s]*(?:no\.?|number|nr\.?)|seriennummer|sn)[\s:#*]+([A-Z0-9][A-Z0-9\-]{5,23})/i);
-  if(lm){var v=normSerial(lm[1]);if(v.length>=6)return{value:v,confident:true};}
-  // 2) Lancom format
-  var lc=full.match(/\b([A-Z]{1,4}[0-9]{8,14})\b/);
-  if(lc)return{value:normSerial(lc[1]),confident:true};
-  // 3) barcode numeric
-  var bc=full.match(/(?<!\d)(\d{10,14})(?!\d)/);
-  if(bc)return{value:bc[1],confident:true};
-  // 4) fallback
-  var tokens=[];
-  var re=/\b([A-Z0-9]{8,20})\b/g,m;
-  while((m=re.exec(full))!==null){var t=m[1];if(/[0-9]/.test(t)&&/[A-Z]/.test(t))tokens.push(t);}
-  tokens.sort(function(a,b){return b.length-a.length;});
-  if(tokens.length)return{value:normSerial(tokens[0]),confident:false};
-  return{value:'',confident:false};
-}
-
-function parsePIN(text,words){
-  var full=text.replace(/\s+/g,' ').trim();
-  var lm=full.match(/(?:cloud[\s\-]?pin|cloudpin|pin)[\s:#]+(\d{6})/i);
-  if(lm)return{value:lm[1],confident:true};
-  var iso=full.match(/(?<!\d)(\d{6})(?!\d)/);
-  if(iso)return{value:iso[1],confident:true};
-  return{value:'',confident:false};
-}
-
-function looksLikeSN(t){
-  t=t.trim().toUpperCase().replace(/[-]/g,'');
-  if(t.length<6||t.length>24)return false;
-  if(!/[0-9]/.test(t))return false;
-  if(/^[A-Z]+$/.test(t))return false;
-  return true;
-}
-function normSerial(v){return String(v||'').replace(/[^\w\-]/g,'').replace(/_/g,'').trim().toUpperCase();}
-
-function goToStep2(){
-  currentStep=2;
-  document.getElementById('step1Card').classList.add('hidden');
-  document.getElementById('step2Card').classList.remove('hidden');
-  updateDots();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function goToStep1(){
-  currentStep=1;
-  document.getElementById('step2Card').classList.add('hidden');
-  document.getElementById('step1Card').classList.remove('hidden');
-  updateDots();
-}
-function updateDots(){
-  ['dot1','dot2','dot3'].forEach(function(id){document.getElementById(id).className='step-dot';});
-  ['line1','line2'].forEach(function(id){document.getElementById(id).className='step-line';});
-  if(currentStep===1){document.getElementById('dot1').classList.add('active');}
-  else if(currentStep===2){document.getElementById('dot1').classList.add('done');document.getElementById('dot2').classList.add('active');document.getElementById('line1').classList.add('done');}
-  else{['dot1','dot2','dot3'].forEach(function(id){document.getElementById(id).classList.add('done');});['line1','line2'].forEach(function(id){document.getElementById(id).classList.add('done');});}
-}
-
-function saveEntry(){
-  var sn=document.getElementById('fieldSN').value.trim();
-  var pin=document.getElementById('fieldPIN').value.trim();
-  if(!sn&&!pin){showStatus('pin','error','Mindestens Seriennummer oder PIN eingeben');return;}
-  if(pin&&!/^\d{6}$/.test(pin)){showStatus('pin','error','Cloud-PIN muss genau 6 Ziffern haben');return;}
-  var auto=document.getElementById('fieldSN').classList.contains('found')&&document.getElementById('fieldPIN').classList.contains('found');
-  entries.push({id:Date.now(),sn:sn,pin:pin,note:document.getElementById('fieldNote').value.trim(),date:new Date().toLocaleString('de-AT'),auto:auto});
-  saveData(); renderTable(); resetAll();
-  currentStep=3;updateDots();
-  setTimeout(function(){currentStep=1;updateDots();},1400);
-}
-
-function deleteEntry(id){entries=entries.filter(function(e){return e.id!==id;});saveData();renderTable();}
-
-function addManual(){
-  resetAll();
-  deviceImage='manual';pinImage='manual';
-  document.getElementById('snFieldWrap').classList.add('visible');
-  document.getElementById('hintSN').innerHTML='<span class="hint-warn">✏ Manueller Eintrag</span>';
-  document.getElementById('nextBtn1Wrap').style.display='block';
-  goToStep2();
-  document.getElementById('pinFieldWrap').classList.add('visible');
-  document.getElementById('hintPIN').innerHTML='<span class="hint-warn">✏ Manueller Eintrag</span>';
-  document.getElementById('noteWrap').classList.add('visible');
-  document.getElementById('saveWrap').style.display='block';
+function addManual() {
+  document.getElementById('fieldSN').value = '';
+  document.getElementById('fieldPIN').value = '';
+  document.getElementById('fieldNote').value = '';
+  document.getElementById('fieldSN').className = 'field-input';
+  document.getElementById('fieldPIN').className = 'field-input';
+  document.getElementById('confSN').innerHTML = '';
+  document.getElementById('confPIN').innerHTML = '';
+  document.getElementById('resultForm').classList.add('visible');
   document.getElementById('fieldSN').focus();
 }
 
-function resetAll(){
-  deviceImage=null;pinImage=null;
-  ['photoSectionDevice','photoSectionPin'].forEach(function(id){document.getElementById(id).classList.remove('visible');});
-  ['photoImgDevice','photoImgPin'].forEach(function(id){document.getElementById(id).src='';});
-  ['fileInputDevice','fileInputPin'].forEach(function(id){document.getElementById(id).value='';});
-  ['wordOverlayDevice','wordOverlayPin'].forEach(function(id){document.getElementById(id).innerHTML='';});
-  ['hintBannerDevice','hintBannerPin'].forEach(function(id){document.getElementById(id).className='ocr-hint-banner';});
-  ['scanDeviceBtn','scanPinBtn'].forEach(function(id){document.getElementById(id).disabled=true;});
-  ['snFieldWrap','pinFieldWrap','noteWrap'].forEach(function(id){document.getElementById(id).classList.remove('visible');});
-  ['fieldSN','fieldPIN'].forEach(function(id){document.getElementById(id).value='';document.getElementById(id).className='field-input';});
-  ['hintSN','hintPIN'].forEach(function(id){document.getElementById(id).innerHTML='';});
-  document.getElementById('fieldNote').value='';
-  document.getElementById('nextBtn1Wrap').style.display='none';
-  document.getElementById('saveWrap').style.display='none';
-  hideStatus('device');hideStatus('pin');
-  document.getElementById('step2Card').classList.add('hidden');
-  document.getElementById('step1Card').classList.remove('hidden');
-  currentStep=1;updateDots();
+function resetForm() {
+  document.getElementById('resultForm').classList.remove('visible');
+  hideStatus();
 }
 
-async function openCamera(target){
-  cameraTarget=target;
-  try{
-    cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-    document.getElementById('cameraVideo').srcObject=cameraStream;
-    document.getElementById('cameraModalTitle').textContent=target==='device'?'📷 Gerät fotografieren':'📷 PIN-Zettel fotografieren';
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  const count = document.getElementById('entryCount');
+  count.textContent = entries.length + (entries.length === 1 ? ' Eintrag' : ' Einträge');
+  empty.style.display = entries.length ? 'none' : 'block';
+
+  tbody.innerHTML = entries.map((e, i) => `
+    <tr>
+      <td class="cell-date" style="color:var(--text3)">${i + 1}</td>
+      <td class="cell-sn">${e.sn || '<span style="color:var(--text3)">—</span>'}</td>
+      <td class="cell-pin">${e.pin || '<span style="color:var(--text3)">—</span>'}</td>
+      <td><span class="tag ${e.auto ? 'tag-ok' : 'tag-manual'}">${e.auto ? 'Auto' : 'Manuell'}</span></td>
+      <td class="cell-date">${e.date}</td>
+      <td class="cell-note" title="${e.note}">${e.note || ''}</td>
+      <td><button class="btn btn-danger" onclick="deleteEntry(${e.id})">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+function exportCSV() {
+  if (!entries.length) { showStatus('error', 'Keine Einträge zum Exportieren'); return; }
+  const BOM = '\uFEFF';
+  const header = 'Nr.;Seriennummer;Cloud-PIN;Erkennung;Datum;Notiz\r\n';
+  const rows = entries.map((e, i) =>
+    [i+1, e.sn, e.pin, e.auto ? 'Automatisch' : 'Manuell', e.date, e.note]
+    .map(v => '"' + String(v).replace(/"/g, '""') + '"')
+    .join(';')
+  ).join('\r\n');
+  const blob = new Blob([BOM + header + rows], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'lancom_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+function clearAll() {
+  if (!entries.length) return;
+  if (!confirm(`Alle ${entries.length} Einträge löschen?`)) return;
+  entries = [];
+  saveData();
+  renderTable();
+}
+
+function saveData() {
+  localStorage.setItem('lancom_entries', JSON.stringify(entries));
+}
+
+// Status
+function showStatus(type, text) {
+  const bar = document.getElementById('statusBar');
+  const spinner = document.getElementById('statusSpinner');
+  bar.className = 'status-bar visible ' + type;
+  document.getElementById('statusText').textContent = text;
+  spinner.style.display = type === 'processing' ? 'block' : 'none';
+}
+function hideStatus() {
+  document.getElementById('statusBar').className = 'status-bar';
+}
+
+// Camera
+async function openCamera() {
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    document.getElementById('cameraVideo').srcObject = cameraStream;
     document.getElementById('cameraModal').classList.add('open');
-  }catch(e){showStatus(target,'error','Kamera-Zugriff verweigert');}
+  } catch {
+    showStatus('error', 'Kamera-Zugriff verweigert oder nicht verfügbar');
+  }
 }
-function capturePhoto(){
-  var v=document.getElementById('cameraVideo'),c=document.getElementById('captureCanvas');
-  c.width=v.videoWidth;c.height=v.videoHeight;
-  c.getContext('2d').drawImage(v,0,0);
-  var url=c.toDataURL('image/jpeg',.92);
+
+function capturePhoto() {
+  const video = document.getElementById('cameraVideo');
+  const canvas = document.getElementById('captureCanvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  currentImage = canvas.toDataURL('image/jpeg', 0.92);
+  document.getElementById('previewImg').src = currentImage;
+  document.getElementById('previewWrap').classList.add('visible');
+  document.getElementById('scanBtn').disabled = false;
   closeCamera();
-  var arr=url.split(','),mime=arr[0].match(/:(.*?);/)[1],bstr=atob(arr[1]),n=bstr.length,u=new Uint8Array(n);
-  while(n--)u[n]=bstr.charCodeAt(n);
-  handleFile(new File([u],'photo.jpg',{type:mime}),cameraTarget);
 }
-function closeCamera(){
-  if(cameraStream){cameraStream.getTracks().forEach(function(t){t.stop();});cameraStream=null;}
+
+function closeCamera() {
+  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
   document.getElementById('cameraModal').classList.remove('open');
 }
-
-function renderTable(){
-  var tbody=document.getElementById('tableBody'),empty=document.getElementById('emptyState');
-  document.getElementById('entryCount').textContent=entries.length+(entries.length===1?' Eintrag':' Einträge');
-  empty.style.display=entries.length?'none':'block';
-  tbody.innerHTML=entries.map(function(e,i){
-    return '<tr><td class="cell-date" style="color:var(--text3)">'+(i+1)+'</td><td class="cell-sn">'+(esc(e.sn)||'<span style="color:var(--text3)">—</span>')+'</td><td class="cell-pin">'+(esc(e.pin)||'<span style="color:var(--text3)">—</span>')+'</td><td><span class="tag '+(e.auto?'tag-ok':'tag-manual')+'">'+(e.auto?'Auto':'Manuell')+'</span></td><td class="cell-date">'+esc(e.date)+'</td><td class="cell-note" title="'+esc(e.note||'')+'">'+esc(e.note||'')+'</td><td><button class="btn btn-danger" onclick="deleteEntry('+e.id+')">✕</button></td></tr>';
-  }).join('');
-}
-
-function exportCSV(){
-  if(!entries.length){alert('Keine Einträge');return;}
-  var BOM='\uFEFF',head='Nr.;Seriennummer;Cloud-PIN;Erkennung;Datum;Notiz\r\n';
-  var rows=entries.map(function(e,i){return[i+1,e.sn,e.pin,e.auto?'Automatisch':'Manuell',e.date,e.note].map(function(v){return'"'+String(v==null?'':v).replace(/"/g,'""')+'"';}).join(';');}).join('\r\n');
-  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([BOM+head+rows],{type:'text/csv;charset=utf-8'}));
-  a.download='lancom_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
-}
-function clearAll(){
-  if(!entries.length)return;
-  if(!confirm('Alle '+entries.length+' Einträge löschen?'))return;
-  entries=[];saveData();renderTable();
-}
-function saveData(){localStorage.setItem('lancom_entries',JSON.stringify(entries));}
-
-function showStatus(type,state,text){
-  var sfx=type==='device'?'Device':'Pin';
-  var bar=document.getElementById('status'+sfx);
-  bar.className='status-bar visible '+state;
-  document.getElementById('spinner'+sfx).style.display=state==='processing'?'block':'none';
-  document.getElementById('statusText'+sfx).textContent=text;
-}
-function hideStatus(type){document.getElementById('status'+(type==='device'?'Device':'Pin')).className='status-bar';}
-
-function openSyncModal(){
-  document.getElementById('syncModal').classList.add('open');
-  if(!entries.length){document.getElementById('syncLinkWrap').style.display='none';document.getElementById('syncEmpty').style.display='block';return;}
-  document.getElementById('syncEmpty').style.display='none';document.getElementById('syncLinkWrap').style.display='block';
-  var data=JSON.stringify(entries.map(function(e){return{s:e.sn,p:e.pin,n:e.note,d:e.date,a:e.auto};}));
-  var url=location.origin+location.pathname+'#sync='+btoa(unescape(encodeURIComponent(data)));
-  document.getElementById('syncLinkInput').value=url;generateQR(url);
-}
-function closeSyncModal(){document.getElementById('syncModal').classList.remove('open');}
-function copySyncLink(){
-  navigator.clipboard.writeText(document.getElementById('syncLinkInput').value).then(function(){
-    var btn=document.getElementById('copyBtn');btn.textContent='✓ Kopiert';btn.style.color='var(--green)';
-    setTimeout(function(){btn.textContent='Kopieren';btn.style.color='';},2000);
-  });
-}
-function generateQR(url){
-  var c=document.getElementById('qrCanvas'),s=160;c.width=c.height=s;
-  var ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,s,s);
-  if(url.length>2000){ctx.fillStyle='#888';ctx.font='11px monospace';ctx.textAlign='center';ctx.fillText('Link zu lang',s/2,s/2);return;}
-  var img=new Image();img.crossOrigin='anonymous';
-  img.onload=function(){ctx.drawImage(img,0,0,s,s);};
-  img.onerror=function(){ctx.fillStyle='#888';ctx.font='10px monospace';ctx.textAlign='center';ctx.fillText('QR nicht verfügbar',s/2,s/2);};
-  img.src='https://api.qrserver.com/v1/create-qr-code/?size='+s+'x'+s+'&data='+encodeURIComponent(url);
-}
-function checkSyncImport(){
-  var hash=location.hash;if(!hash.startsWith('#sync='))return;
-  try{
-    var data=JSON.parse(decodeURIComponent(escape(atob(hash.slice(6)))));var added=0;
-    data.forEach(function(e){if(!entries.some(function(ex){return ex.sn===e.s&&ex.pin===e.p;})){entries.push({id:Date.now()+Math.random(),sn:e.s||'',pin:e.p||'',note:e.n||'',date:e.d||new Date().toLocaleString('de-AT'),auto:!!e.a});added++;}});
-    if(added>0){saveData();renderTable();}
-    history.replaceState(null,'',location.pathname);
-  }catch(e){}
-}
-function esc(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 </script>
 </body>
 </html>
+<script>
+// Sync per Link
+document.querySelector('header .header-right').insertAdjacentHTML('afterbegin', '');
+
+function openSyncModal() {
+  const modal = document.getElementById('syncModal');
+  modal.classList.add('open');
+  if (!entries.length) {
+    document.getElementById('syncLinkWrap').style.display = 'none';
+    document.getElementById('syncEmpty').style.display = 'block';
+    return;
+  }
+  document.getElementById('syncEmpty').style.display = 'none';
+  document.getElementById('syncLinkWrap').style.display = 'block';
+  const data = JSON.stringify(entries.map(e => ({ s: e.sn, p: e.pin, n: e.note, d: e.date, a: e.auto })));
+  const encoded = btoa(unescape(encodeURIComponent(data)));
+  const url = location.origin + location.pathname + '#sync=' + encoded;
+  document.getElementById('syncLinkInput').value = url;
+  generateQR(url);
+}
+
+function closeSyncModal() {
+  document.getElementById('syncModal').classList.remove('open');
+}
+
+function copySyncLink() {
+  const input = document.getElementById('syncLinkInput');
+  navigator.clipboard.writeText(input.value).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ Kopiert';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'var(--green)';
+    setTimeout(() => { btn.textContent = 'Kopieren'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+  });
+}
+
+function generateQR(url) {
+  const canvas = document.getElementById('qrCanvas');
+  const size = 160;
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, size, size);
+  if (url.length > 2000) {
+    ctx.fillStyle = '#888';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Link zu lang für QR.', size/2, size/2 - 8);
+    ctx.fillText('Bitte manuell kopieren.', size/2, size/2 + 8);
+    return;
+  }
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => { ctx.drawImage(img, 0, 0, size, size); };
+  img.onerror = () => {
+    ctx.fillStyle = '#888';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('QR nicht verfügbar', size/2, size/2);
+    ctx.fillText('Link manuell kopieren', size/2, size/2 + 16);
+  };
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&data=' + encodeURIComponent(url);
+}
+
+function checkSyncImport() {
+  const hash = location.hash;
+  if (!hash.startsWith('#sync=')) return;
+  try {
+    const encoded = hash.slice(6);
+    const data = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+    const imported = data.map(e => ({
+      id: Date.now() + Math.random(),
+      sn: e.s || '',
+      pin: e.p || '',
+      note: e.n || '',
+      date: e.d || new Date().toLocaleString('de-AT'),
+      auto: e.a || false
+    }));
+    let added = 0;
+    for (const imp of imported) {
+      const exists = entries.some(ex => ex.sn === imp.sn && ex.pin === imp.pin);
+      if (!exists) { entries.push(imp); added++; }
+    }
+    if (added > 0) {
+      saveData();
+      renderTable();
+      showStatus('success', added + ' Eintrag' + (added > 1 ? 'e' : '') + ' aus Sync-Link importiert');
+    } else {
+      showStatus('success', 'Sync-Link gelesen — alle Einträge bereits vorhanden');
+    }
+    history.replaceState(null, '', location.pathname);
+  } catch(e) {
+    showStatus('error', 'Sync-Link konnte nicht gelesen werden');
+  }
+}
+
+checkSyncImport();
+</script>
